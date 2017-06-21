@@ -1,6 +1,6 @@
-#  Aubrey McIntosh, Ph.D.  2017-04-24 1493017251  $Id:$
+#  Aubrey McIntosh, Ph.D.  2017-04-24 1493017251  $Id$
 1. Ph.D. --> PhD
-2. $working $Id:$
+2. $working $Id$
 3. unix timestamp
 4. git tag --> timestamp
 5. name scripts with sequence prefix
