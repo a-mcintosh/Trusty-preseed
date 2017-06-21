@@ -1,5 +1,5 @@
 #  ----------------------------------------------------------------
-#  Aubrey McIntosh, Ph.D.  2017-04-24 1493017251  $Id$
+#  -- Aubrey McIntosh, Ph.D.  2017-04-24 $Id$
 #  
 #  Build a virtual machine envionment to support
 #  development of IOUscript.
@@ -14,7 +14,7 @@ d-i partman-auto/disk string /dev/sda /dev/sdb /dev/sdc
 d-i partman-lvm/device_remove_lvm boolean true
 d-i partman-md/device_remove_md boolean true
 
-#d-i partman-auto-lvm/guided_size string 100%
+d-i partman-auto-lvm/guided_size string 80%
 d-i partman-auto/method string lvm
 #  ----------------------------------------------------------------
 
@@ -34,14 +34,14 @@ d-i partman-auto/expert_recipe string                         \
 	method{ lvm }					      \
         device{ /dev/sda2 }                                   \
         .                                                     \
-	100 1000 6144 lvm		             	      \
+	100 1000 7680 lvm		             	      \
 	$defaultignore{ }		 		      \
 	$primary{ }					      \
         vg_name{ vg-projects }	                              \
 	method{ lvm }					      \
         device{ /dev/sdb1 }                                   \
         .                                                     \
-	100 1000 6144 lvm		             	      \
+	100 1000 7680 lvm		             	      \
 	$defaultignore{ }		 		      \
 	$primary{ }					      \
         vg_name{ vg-blockchains }    	                      \
@@ -158,9 +158,14 @@ d-i finish-install/reboot_in_progress note
 #  ----------------------------------------------------------------
 #  -- Custom Commands
 #  ----------------------------------------------------------------
+#  -- https://ubuntuforums.org/showthread.php?t=1977570
+#  -- http://stackoverflow.com/questions/33113363/debian-preseed-late-command-not-executed
 
-d-i preseed/late_command string \
-in-target touch touched-at-sys-install; 
+d-i preseed/late_command string in-target mkdir -p /root/.ssh; \
+in-target /bin/sh -c "echo 'ssh-ed25519 AAAAC3NzaC1IAg1wilR9asDXIPwTsvZXasdTXqasdKv0rIqqweAtxGVgup foobar' >> /root/.ssh/authorized_keys"; \
+in-target chown -R root:root /root/.ssh/
+
+
 
 
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 #-------------------------------------------------------------------------------------
-#  -- Aubrey McIntosh, Ph.D.  2017-04-24 1493017251  $Id$
+#  -- Aubrey McIntosh, Ph.D.  2017-04-24 $Id$
 #  -- make a VirtualBox machine
 #  -- execute from inside the $EPOCH directory
 #-------------------------------------------------------------------------------------
@@ -11,8 +11,8 @@ VBoxManage createvm --name "coins-$thisEpoch" --ostype Ubuntu_64 --register
 VBoxManage modifyvm "coins-$thisEpoch" --description "Environment to create an coins Ubuntu install CD based on 14.04.3." 
 VBoxManage modifyvm "coins-$thisEpoch" --clipboard bidirectional --memory 1024 --nic1 bridged --vram 10 --bridgeadapter1 eth0
 VBoxManage modifyvm "coins-$thisEpoch" --vrde on
-VBoxManage createhd --filename "/home/amcintosh/VirtualBox VMs/coins-$thisEpoch/coins-$thisEpoch.system.vdi" --size 8096
-VBoxManage createhd --filename "/home/amcintosh/VirtualBox VMs/coins-$thisEpoch/coins-$thisEpoch.projects.vdi" --size 6144
+VBoxManage createhd --filename "/home/amcintosh/VirtualBox VMs/coins-$thisEpoch/coins-$thisEpoch.system.vdi" --size 12800
+VBoxManage createhd --filename "/home/amcintosh/VirtualBox VMs/coins-$thisEpoch/coins-$thisEpoch.projects.vdi" --size 8096
 VBoxManage createhd --filename "/home/amcintosh/VirtualBox VMs/coins-$thisEpoch/coins-$thisEpoch.blockchains.vdi" --size 20480
 
 

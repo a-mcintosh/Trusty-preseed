@@ -1,6 +1,6 @@
 #!/bin/sh
 #-------------------------------------------------------------------------------------
-#  -- Aubrey McIntosh, Ph.D.  2017-04-24 1493017251  $Id$
+#  -- Aubrey McIntosh, Ph.D.  2017-04-24 $Id$
 #  -- 2nd phase of virtual machine setup
 #  -- This should all be in preseed when I learn how.
 #  --
