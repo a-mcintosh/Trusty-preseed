@@ -1,0 +1,5 @@
+*.sh ident
+README* ident
+*.txt ident
+preseed ident
+

@@ -1,0 +1,166 @@
+#  ----------------------------------------------------------------
+#  Aubrey McIntosh, Ph.D.  2017-04-24 1493017251  $Id:$
+#  
+#  Build a virtual machine envionment to support
+#  development of IOUscript.
+#
+#  ----------------------------------------------------------------
+
+#  ----------------------------------------------------------------
+#  -- Partitioning
+#  ----------------------------------------------------------------
+
+d-i partman-auto/disk string /dev/sda /dev/sdb /dev/sdc
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-md/device_remove_md boolean true
+
+#d-i partman-auto-lvm/guided_size string 100%
+d-i partman-auto/method string lvm
+#  ----------------------------------------------------------------
+
+#  ----------------------------------------------------------------
+d-i partman-auto/expert_recipe string                         \
+      iso-cd-produce ::                                       \
+        120 250 1500 ext4 $primary{ } $bootable{ }            \
+        label{ boot }                                         \
+        mountpoint{ /boot }                                   \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+        .                                                     \
+	100 1000 10240 lvm		             	      \
+	$defaultignore{ }		 		      \
+	$primary{ }					      \
+        vg_name{ vg-system }	                              \
+	method{ lvm }					      \
+        device{ /dev/sda2 }                                   \
+        .                                                     \
+	100 1000 6144 lvm		             	      \
+	$defaultignore{ }		 		      \
+	$primary{ }					      \
+        vg_name{ vg-projects }	                              \
+	method{ lvm }					      \
+        device{ /dev/sdb1 }                                   \
+        .                                                     \
+	100 1000 6144 lvm		             	      \
+	$defaultignore{ }		 		      \
+	$primary{ }					      \
+        vg_name{ vg-blockchains }    	                      \
+	method{ lvm }					      \
+        device{ /dev/sdc1 }                                   \
+        .                                                     \
+         512 8192 200% linux-swap $lvmok{ }                   \
+        label{ linux-swap }                                   \
+        lv_name{ linux-swap }                                 \
+        method{ swap }                                        \
+        format{ }                                             \
+        in_vg{ vg-system } 	                              \
+        .                                                     \
+        7680 8196 8196 ext4  $lvmok{ }                        \
+        label{ root }                                         \
+        lv_name{ root }                                       \
+        in_vg{ vg-system }	                              \
+        mountpoint{ / }                                       \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+	.						      \
+        1024 2048 1536 ext4 $lvmok{ }                         \
+        label{ iso-in }                                       \
+        lv_name{ iso-in }                                     \
+        in_vg{ vg-projects }	                              \
+        mountpoint{ /home/aubrey/opt/coins }     	      \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+        .                                                     \
+        1356 2048 20480 ext4 $lvmok{ }           	      \
+        label{ my-usr-srv }                        	      \
+        lv_name{ my-usr-srv }           	              \
+        in_vg{ vg-blockchains }	                              \
+        mountpoint{ /home/aubrey/usr/srv }   		      \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+        .                                                     
+
+#  ----------------------------------------------------------------
+
+# This makes partman automatically partition without confirmation
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+#  ----------------------------------------------------------------
+#  -- Locale
+#  ----------------------------------------------------------------
+d-i console-setup/ask_detect boolean false
+d-i console-setup/layoutcode string us
+d-i debian-installer/language string en
+d-i debian-installer/country string US
+d-i debian-installer/locale string en_US.UTF-8
+d-i localechooser/supported-locales multiselect en_US.UTF-8
+
+#  -- Keyboard is with localization
+d-i keyboard-configuration/layoutcode string us
+
+#  ----------------------------------------------------------------
+#  -- Network
+#  ----------------------------------------------------------------
+d-i netcfg/hostname string cloner
+d-i netcfg/get_domain string auto
+d-i netcfg/choose_interface select auto
+
+#  ----------------------------------------------------------------
+#  -- Clock
+#  ----------------------------------------------------------------
+d-i clock-setup/utc-auto boolean true
+d-i clock-setup/utc boolean true
+d-i time/zone string US/Central
+d-i clock-setup/ntp boolean true
+
+#  ----------------------------------------------------------------
+#  -- Packages, Mirrors, Image
+#  ----------------------------------------------------------------
+#d-i base-installer/kernel/override-image string linux-server
+d-i base-installer/kernel/override-image string linux-image-amd64
+d-i mirror/country string US
+d-i mirror/http/proxy string
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
+d-i pkgsel/install-language-support boolean false
+tasksel tasksel/first multiselect ubuntu-desktop ssh-server
+d-i pkgsel/update-policy select none
+d-i mirror/http/proxy string http://[2001:470:b8ac:0:a00:27ff:fefe:d8d]:3142
+
+#  ----------------------------------------------------------------
+#  -- Extra packages
+#  ----------------------------------------------------------------
+
+d-i pkgsel/include string ssh-server build-essential git ntp
+
+#  ----------------------------------------------------------------
+#  -- User Creation
+#  ----------------------------------------------------------------
+d-i passwd/root-login boolean false
+#  ----------------------------------------------------------------
+d-i passwd/user-fullname string aubrey IOUscript
+d-i passwd/username string aubrey
+d-i user-setup/allow-password-weak boolean true
+d-i passwd/user-password-crypted password \
+  $6$0lJFdl137kYb$c8R4GZtZTyL8oTFCKxHLXukkg6GO8L/K/zb2FexN7EgvT6ZKgElNDSIAixV8Rhj9/UbYBT7QyknwypzN8dfc7.
+#   mkpasswd -m sha-512 is your friend.
+his
+#  ----------------------------------------------------------------
+#  -- Grub
+#  ----------------------------------------------------------------
+d-i grub-installer/grub2_instead_of_grub_legacy boolean true
+d-i grub-installer/only_debian boolean true
+d-i finish-install/reboot_in_progress note
+
+#  ----------------------------------------------------------------
+#  -- Custom Commands
+#  ----------------------------------------------------------------
+
+d-i preseed/late_command string \
+in-target touch touched-at-sys-install; 
+
+
+

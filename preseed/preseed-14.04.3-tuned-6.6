@@ -1,0 +1,196 @@
+#  ----------------------------------------------------------------
+#  Aubrey McIntosh, Ph.D.  2017-04-24 1493017251  $Id:$
+#  
+#  First experiments with preseed files.
+#  Tested on Ubuntu 14.04.3 
+#    d-i partman-auto/method string lvm
+#
+#  label live-install-1493361651
+#    menu label ^Auto Install Ubuntu
+#    kernel /casper/vmlinuz.efi
+#    append DEBCONF_DEBUG=developer file=/cdrom/preseed/preseed-14.04.3 auto=true ubiquity/reboot=true  
+#  ----------------------------------------------------------------
+
+#  ----------------------------------------------------------------
+#  -- Partitioning
+#  ----------------------------------------------------------------
+
+d-i partman-auto/disk string /dev/sda /dev/sdb
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-md/device_remove_md boolean true
+
+#  ----------------------------------------------------------------
+#  12.04 doesn't support lvm, it was introduced in 12.10.  
+#  Moving ahead to 14.04.3 LTS
+#  ----------------------------------------------------------------
+
+#d-i partman-auto-lvm/guided_size string 100%
+d-i partman-auto/method string lvm
+#  ----------------------------------------------------------------
+
+#  ----------------------------------------------------------------
+#  -- sandbox-1493202646 seems to partition ok, vg-01 on both sdb & sdd
+#  -- sandbox-1493238013
+#  --   add /dev/sd3, no further changes.
+#  --   move /opt/iso/in to vg-02 --> installed.
+#  --   create /dev/sdc at 18432; --> it was all used for vg-02
+#  --   set physical description of vg-02/dev/sdc to 6144 max --> vg-02 consumed all, sized at 18 GiB
+#  --   inserted vg-01 physical description onto /dev/sdc (both 6144)  
+#         --> fails.  syslog shows several partitions created.
+#           parted shows unallocated space on /dev/sdc and right sized partition for vg-01
+#  --   placed iso-out into ubuntu-vg  --> complains of a lvm with no physical disk in it.
+#  --   make /dev/sdc only 4096;  iso/in & iso/out both in vg-02 (6144)  
+#         --> vg-01 split on 2 physical;  iso-{out,in} shrunk, /dev/sde allocated to ubuntu-vg
+#  --   severely shrunk /dev/sdc (3000)  --> smaller partitions in vg-02, all on /dev/sdc, in spec.
+#  --   made /dev/sdc 2000, too small for both iso-in & iso-out.  --> asymmetric sizes, iso-out too small.
+#  --     /dev/sde is in ubuntu-vg
+#  --   put disk /dev/sde into vg-02
+#  ----------------------------------------------------------------
+#  -- sandbox-1493356162
+#     try using /dev/sde1, /dev/sde2, /dev/sde3 for the 3 physical volumes
+#     to be in vg-01, vg-03, vg-03
+#     ---> works very well.
+#     tuned-2  changed /dev/sdd --> /dev/sdd1  --> ok
+#     tuned-3  changed /dev/sdd1 (vg01) & /dev/sdc --> /dev/sdc1 /dev/sdc2
+#     tuned-4  changed /dev/sdb to /dev/sdb1, reduced from 10000 to 4096 works.
+#     tuned-5  inserted a /dev/sda5 lvm partion  --> nope.
+#     tuned-6  no reverence to /dev/sda*;  multiple instance of vg-01 on /dev/sdb*
+#  ----------------------------------------------------------------
+d-i partman-auto/expert_recipe string                         \
+      iso-cd-produce ::                                       \
+        120 250 1500 ext4 $primary{ } $bootable{ }            \
+        label{ boot }                                         \
+        mountpoint{ /boot }                                   \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+        .                                                     \
+	100 1000 10240 lvm		             	      \
+	$defaultignore{ }		 		      \
+	$primary{ }					      \
+        vg_name{ vg-01 }                                      \
+	method{ lvm }					      \
+        device{ /dev/sda2 }                                   \
+        .                                                     \
+	100 1000 6144 lvm		             	      \
+	$defaultignore{ }		 		      \
+	$primary{ }					      \
+        vg_name{ vg-02 }                                      \
+	method{ lvm }					      \
+        device{ /dev/sdb1 }                                   \
+        .                                                     \
+         512 8192 200% linux-swap $lvmok{ }                   \
+        label{ linux-swap }                                   \
+        lv_name{ linux-swap }                                 \
+        method{ swap }                                        \
+        format{ }                                             \
+        in_vg{ vg-01 }                                        \
+        .                                                     \
+        7680 8196 8196 ext4  $lvmok{ }                        \
+        label{ root }                                         \
+        lv_name{ root }                                       \
+        in_vg{ vg-01 }                                        \
+        mountpoint{ / }                                       \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+	.						      \
+        1024 2048 1536 ext4 $lvmok{ }                         \
+        label{ iso-in }                                       \
+        lv_name{ iso-in }                                     \
+        in_vg{ vg-02 }                                        \
+        mountpoint{ /home/producer/opt/iso/in }               \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+        .                                                     \
+        1356 2048 2048 ext4 $lvmok{ }                         \
+        label{ iso-out }                                      \
+        lv_name{ iso-out }                                    \
+        in_vg{ vg-02 }                                        \
+        mountpoint{ /home/producer/opt/iso/out }              \
+        method{ format } format{ }                            \
+        use_filesystem{ } filesystem{ ext4 }                  \
+        .                                                     
+
+#  ----------------------------------------------------------------
+
+# This makes partman automatically partition without confirmation
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+#  ----------------------------------------------------------------
+#  -- Locale
+#  ----------------------------------------------------------------
+d-i console-setup/ask_detect boolean false
+d-i console-setup/layoutcode string us
+d-i debian-installer/language string en
+d-i debian-installer/country string US
+d-i debian-installer/locale string en_US.UTF-8
+d-i localechooser/supported-locales multiselect en_US.UTF-8
+
+#  -- Keyboard is with localization
+d-i keyboard-configuration/layoutcode string us
+
+#  ----------------------------------------------------------------
+#  -- Network
+#  ----------------------------------------------------------------
+d-i netcfg/hostname string cloner
+d-i netcfg/get_domain string auto
+d-i netcfg/choose_interface select auto
+
+#  ----------------------------------------------------------------
+#  -- Clock
+#  ----------------------------------------------------------------
+d-i clock-setup/utc-auto boolean true
+d-i clock-setup/utc boolean true
+d-i time/zone string US/Central
+d-i clock-setup/ntp boolean true
+
+#  ----------------------------------------------------------------
+#  -- Packages, Mirrors, Image
+#  ----------------------------------------------------------------
+#d-i base-installer/kernel/override-image string linux-server
+d-i base-installer/kernel/override-image string linux-image-amd64
+d-i mirror/country string US
+d-i mirror/http/proxy string
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
+d-i pkgsel/install-language-support boolean false
+tasksel tasksel/first multiselect ubuntu-desktop ssh-server
+d-i pkgsel/update-policy select none
+d-i mirror/http/proxy string http://[2001:470:b8ac:0:a00:27ff:fefe:d8d]:3142
+
+#  ----------------------------------------------------------------
+#  -- Extra packages
+#  ----------------------------------------------------------------
+
+d-i pkgsel/include string ssh-server build-essential git ntp
+
+#  ----------------------------------------------------------------
+#  -- User Creation
+#  ----------------------------------------------------------------
+d-i passwd/root-login boolean false
+#  ----------------------------------------------------------------
+d-i passwd/user-fullname string Producer CDduplication
+d-i passwd/username string producer
+d-i user-setup/allow-password-weak boolean true
+d-i passwd/user-password-crypted password \
+  $6$0lJFdl137kYb$c8R4GZtZTyL8oTFCKxHLXukkg6GO8L/K/zb2FexN7EgvT6ZKgElNDSIAixV8Rhj9/UbYBT7QyknwypzN8dfc7.
+#   mkpasswd -m sha-512 is your friend.
+his
+#  ----------------------------------------------------------------
+#  -- Grub
+#  ----------------------------------------------------------------
+d-i grub-installer/grub2_instead_of_grub_legacy boolean true
+d-i grub-installer/only_debian boolean true
+d-i finish-install/reboot_in_progress note
+
+#  ----------------------------------------------------------------
+#  -- Custom Commands
+#  ----------------------------------------------------------------
+
+d-i preseed/late_command string \
+in-target touch touched-at-sys-install; 
+
+
+
