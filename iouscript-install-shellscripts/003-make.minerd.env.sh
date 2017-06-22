@@ -1,6 +1,6 @@
 #!/bin/sh
 #-------------------------------------------------------------------------------------
-#  -- Aubrey McIntosh, Ph.D.  2017-04-24 $Id$
+#  -- Aubrey McIntosh, Ph.D.  $Id$
 #  -- 3nd phase of virtual machine setup
 #  -- Prerequisite:  new virtual machine, Ubuntu 14.04.3 installed
 #  -- Install minerd, the cpu miner

@@ -1,6 +1,6 @@
 #!/bin/sh
 #-------------------------------------------------------------------------------------
-#  -- Aubrey McIntosh, Ph.D.  2017-04-24 $Id$
+#  -- Aubrey McIntosh, Ph.D.  $Id$
 #  -- 2nd phase of virtual machine setup
 #  -- This should all be in preseed when I learn how.
 #  --
@@ -39,6 +39,8 @@ sudo service ssh restart
 #-------------------------------------------------------------------------------------
 
 sudo sed -i "/^exit 0$/iip addr add 2001:470:b8ac::2017:401/64 dev eth0" /etc/rc.local
+sudo sed -i "/^exit 0$/iip addr add 2001:470:b8ac::1:6/64 dev eth0" /etc/rc.local
+sudo sed -i "/^exit 0$/iip addr add 2001:470:b8ac::1:7/64 dev eth0" /etc/rc.local
 ssh-keygen -N "We don't need no stinkin badges." -f ~/.ssh/id_rsa
 (cd ~/.ssh
   wget http://lifepod6/ssh-pubkeys/authorized_keys

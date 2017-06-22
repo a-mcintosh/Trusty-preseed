@@ -1,6 +1,6 @@
 #!/bin/sh
 #  ----------------------------------------------------------------
-#  -- Aubrey McIntosh, Ph.D.  2017-04-24 $Id$
+#  -- Aubrey McIntosh, Ph.D.  $Id$
 #  make an attendless Ubuntu installation CD
 #    ATTENDLESS-$EPOCH
 #  ----------------------------------------------------------------
