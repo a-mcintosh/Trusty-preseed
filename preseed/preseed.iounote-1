@@ -2,7 +2,7 @@
 #  -- Aubrey McIntosh, Ph.D.  $Id$
 #  
 #  Build a virtual machine envionment to support
-#  development of IOUscript.
+#  development of IOUnote.
 #
 #  ----------------------------------------------------------------
 
@@ -37,14 +37,14 @@ d-i partman-auto/expert_recipe string                         \
 	100 1000 7680 lvm		             	      \
 	$defaultignore{ }		 		      \
 	$primary{ }					      \
-        vg_name{ vg-projects }	                              \
+        vg_name{ vg-home }	                              \
 	method{ lvm }					      \
         device{ /dev/sdb1 }                                   \
         .                                                     \
 	100 1000 7680 lvm		             	      \
 	$defaultignore{ }		 		      \
 	$primary{ }					      \
-        vg_name{ vg-blockchains }    	                      \
+        vg_name{ vg-data }	    	                      \
 	method{ lvm }					      \
         device{ /dev/sdc1 }                                   \
         .                                                     \
@@ -64,18 +64,18 @@ d-i partman-auto/expert_recipe string                         \
         use_filesystem{ } filesystem{ ext4 }                  \
 	.						      \
         1024 2048 1536 ext4 $lvmok{ }                         \
-        label{ iso-in }                                       \
-        lv_name{ iso-in }                                     \
-        in_vg{ vg-projects }	                              \
-        mountpoint{ /home/aubrey/opt/coins }     	      \
+        label{ iso }	                                      \
+        lv_name{ iso }	                                      \
+        in_vg{ vg-home }	                              \
+        mountpoint{ /home }			     	      \
         method{ format } format{ }                            \
         use_filesystem{ } filesystem{ ext4 }                  \
         .                                                     \
-        1356 2048 20480 ext4 $lvmok{ }           	      \
-        label{ my-usr-srv }                        	      \
-        lv_name{ my-usr-srv }           	              \
-        in_vg{ vg-blockchains }	                              \
-        mountpoint{ /home/aubrey/usr/srv }   		      \
+        2048 4096 20480 ext4 $lvmok{ }           	      \
+        label{ var }	                        	      \
+        lv_name{ var }		           	              \
+        in_vg{ vg-data }	                              \
+        mountpoint{ /var }		   		      \
         method{ format } format{ }                            \
         use_filesystem{ } filesystem{ ext4 }                  \
         .                                                     
@@ -141,7 +141,7 @@ d-i pkgsel/include string ssh-server build-essential git ntp
 #  ----------------------------------------------------------------
 d-i passwd/root-login boolean false
 #  ----------------------------------------------------------------
-d-i passwd/user-fullname string aubrey IOUscript
+d-i passwd/user-fullname string aubrey IOUnote
 d-i passwd/username string aubrey
 d-i user-setup/allow-password-weak boolean true
 d-i passwd/user-password-crypted password \
