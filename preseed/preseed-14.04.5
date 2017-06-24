@@ -130,7 +130,7 @@ d-i apt-setup/universe boolean true
 d-i pkgsel/install-language-support boolean false
 tasksel tasksel/first multiselect ubuntu-desktop ssh-server
 d-i pkgsel/update-policy select none
-d-i mirror/http/proxy string http://[2001:470:b8ac:0:a00:27ff:fefe:d8d]:3142
+d-i mirror/http/proxy string http://lifepod13.quarantine:3142
 
 #  ----------------------------------------------------------------
 #  -- Extra packages
@@ -162,7 +162,7 @@ d-i finish-install/reboot_in_progress note
 #  ----------------------------------------------------------------
 
 d-i preseed/late_command string \
-in-target touch touched-at-sys-install; 
+ in-target touch touched-at-sys-install; 
 
 
 

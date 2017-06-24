@@ -15,7 +15,7 @@ echo pwd: `pwd`
 echo ls ..: `ls ..`
 echo '#  ----------------------------------------------------------------'
 
-mkisofs -D -r \
+mkisofs -D -r -input-charset utf-8 \
   -V coins-$EPOCH -cache-inodes -J -l \
   -b isolinux/isolinux.bin -c isolinux/boot.cat \
   -no-emul-boot \
@@ -24,6 +24,7 @@ mkisofs -D -r \
   -m lost+found \
   -m ~/opt/iso/in/origin.txt \
   -m ~/opt/iso/in/isolinux/boot.cat \
+  -m ~/opt/iso/in/isolinux/isolinux.bin \
   -m ~/opt/iso/in/isolinux/txt.cfg \
   -m ~/opt/iso/in/preseed/preseed-14.04.5 \
   -m ~/opt/iso/in/shop-jigs \

@@ -128,7 +128,7 @@ d-i apt-setup/universe boolean true
 d-i pkgsel/install-language-support boolean false
 tasksel tasksel/first multiselect ubuntu-desktop ssh-server
 d-i pkgsel/update-policy select none
-d-i mirror/http/proxy string http://[2001:470:b8ac:0:a00:27ff:fefe:d8d]:3142
+d-i mirror/http/proxy string http://lifepod13.quarantine.vima.austin.tx.us:3142
 
 #  ----------------------------------------------------------------
 #  -- Extra packages
@@ -160,12 +160,29 @@ d-i finish-install/reboot_in_progress note
 #  ----------------------------------------------------------------
 #  -- https://ubuntuforums.org/showthread.php?t=1977570
 #  -- http://stackoverflow.com/questions/33113363/debian-preseed-late-command-not-executed
+#  -- /lib/partman/init.d/01early_command
+#  -- https://github.com/CarlFK/video-stack-deploy/blob/usbstick/scripts/d-i/xenial/preseed_video.cfg
 
-d-i preseed/late_command string in-target mkdir -p /root/.ssh; \
-in-target /bin/sh -c "echo 'ssh-ed25519 AAAAC3NzaC1IAg1wilR9asDXIPwTsvZXasdTXqasdKv0rIqqweAtxGVgup foobar' >> /root/.ssh/authorized_keys"; \
-in-target chown -R root:root /root/.ssh/
+#  ----------------------------------------------------------------
+#  -- Pressing right-ctl-F1 opens a terminal.
+#  -- export DISPLAY=:0.0; gnome-terminal &
+#  -- inside the terminal> sudo logger -i "Aubrey from gnome-terminal"
+#  ----------------------------------------------------------------
 
 
+#  ----------------------------------------------------------------
+#  -- Test to see if these execute anything.
+#  ----------------------------------------------------------------
+d-i preseed/early_command string \
+logger -i "Aubrey 1"
 
+d-i preseed/late_command string \
+logger -i "Aubrey 2" \
+in-target touch /root/touched-during-install-1; \
+in-target touch /target/root/touched-during-install-2
 
+d-i partman/early_command string \
+logger -i "Aubrey 3" \
+in-target touch /root/touched-during-install-3; \
+in-target touch /target/root/touched-during-install-4
 

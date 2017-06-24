@@ -9,7 +9,8 @@ thisEpoch=`basename $aux`; export thisEpoch; echo for epoch $thisEpoch
 
 VBoxManage createvm --name "coins-$thisEpoch" --ostype Ubuntu_64 --register
 VBoxManage modifyvm "coins-$thisEpoch" --description "Environment to create an coins Ubuntu install CD based on 14.04.5." 
-VBoxManage modifyvm "coins-$thisEpoch" --clipboard bidirectional --memory 1024 --nic1 bridged --vram 10 --bridgeadapter1 eth0
+VBoxManage modifyvm "coins-$thisEpoch" --clipboard bidirectional --memory 1024 --nic1 bridged --vram 10 --bridgeadapter1 eth0 --cableconnected1=off
+VBoxManage modifyvm "coins-$thisEpoch" --nic2 hostonly --hostonlyadapter2 vboxnet1
 VBoxManage modifyvm "coins-$thisEpoch" --vrde on
 VBoxManage createhd --filename "/home/amcintosh/VirtualBox VMs/coins-$thisEpoch/coins-$thisEpoch.system.vdi" --size 12800
 VBoxManage createhd --filename "/home/amcintosh/VirtualBox VMs/coins-$thisEpoch/coins-$thisEpoch.projects.vdi" --size 8096

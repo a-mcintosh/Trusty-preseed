@@ -28,7 +28,7 @@ sudo sed -i "s/ubuntu/iounote/g" /etc/hosts
 #  -- close off password login
 #-------------------------------------------------------------------------------------
 
-echo 'Acquire::http { Proxy "http://lifepod13:3142"; };' > 01proxy
+echo 'Acquire::http { Proxy "http://lifepod13.quarantine.vima.austin.tx.us:3142"; };' > 01proxy
 sudo mv 01proxy /etc/apt/apt.conf.d/.
 sudo apt-get install openssh-server
 sudo sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
@@ -40,12 +40,12 @@ sudo service ssh restart
 
 sudo sed -i "/^exit 0$/iip addr add 2001:470:b8ac::2017:402/64 dev eth0" /etc/rc.local
 sudo sed -i "/^exit 0$/iip addr add 2001:470:b8ac::1:6/64 dev eth0" /etc/rc.local
-ssh-keygen -N "We don't need no stinkin badges." -f ~/.ssh/id_rsa
+ssh-keygen -N "This is not the real pass-phrase." -f ~/.ssh/id_rsa
 (cd ~/.ssh
   wget http://lifepod13/ssh-pubkeys/authorized_keys
 )
 
 
 #-------------------------------------------------------------------------------------
-sudo apt-get install ntp gparted
+sudo apt-get install ntp gparted git
 
