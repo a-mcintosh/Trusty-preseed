@@ -165,6 +165,7 @@ d-i grub-installer/only_debian boolean true
 #  -- /lib/partman/init.d/01early_command
 #  -- https://github.com/CarlFK/video-stack-deploy/blob/usbstick/scripts/d-i/xenial/preseed_video.cfg
 #  -- debconf-set-selections -c preseed.cfg.
+#  -- http://releases.ubuntu.com/14.04/
 
 #  ----------------------------------------------------------------
 #  -- Pressing right-ctl-F1 opens a terminal.
