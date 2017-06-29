@@ -1,60 +1,23 @@
 #  ----------------------------------------------------------------
-#  -- Aubrey McIntosh, Ph.D.  $Id$
+#  -- Aubrey McIntosh, Ph.D.  $Id: 8e4f2cc36c5a275fce6dd2ad53bce74f1b810cf8 $
 #  
-#  First experiments with preseed files.
-#  Tested on Ubuntu 14.04.3 
-#    d-i partman-auto/method string lvm
+#  Build a virtual machine
+#  Install Ubuntu 14.04.5 LTS (trusty).
 #
-#  label live-install-1493361651
-#    menu label ^Auto Install Ubuntu
-#    kernel /casper/vmlinuz.efi
-#    append DEBCONF_DEBUG=developer file=/cdrom/preseed/preseed-14.04.3 auto=true ubiquity/reboot=true  
 #  ----------------------------------------------------------------
 
 #  ----------------------------------------------------------------
 #  -- Partitioning
 #  ----------------------------------------------------------------
 
-d-i partman-auto/disk string /dev/sda /dev/sdb
+d-i partman-auto/disk string /dev/sda /dev/sdb /dev/sdc
 d-i partman-lvm/device_remove_lvm boolean true
 d-i partman-md/device_remove_md boolean true
 
-#  ----------------------------------------------------------------
-#  12.04 doesn't support lvm, it was introduced in 12.10.  
-#  Moving ahead to 14.04.3 LTS
-#  ----------------------------------------------------------------
-
-#d-i partman-auto-lvm/guided_size string 100%
+d-i partman-auto-lvm/guided_size string 80%
 d-i partman-auto/method string lvm
 #  ----------------------------------------------------------------
 
-#  ----------------------------------------------------------------
-#  -- sandbox-1493202646 seems to partition ok, vg-01 on both sdb & sdd
-#  -- sandbox-1493238013
-#  --   add /dev/sd3, no further changes.
-#  --   move /opt/iso/in to vg-02 --> installed.
-#  --   create /dev/sdc at 18432; --> it was all used for vg-02
-#  --   set physical description of vg-02/dev/sdc to 6144 max --> vg-02 consumed all, sized at 18 GiB
-#  --   inserted vg-01 physical description onto /dev/sdc (both 6144)  
-#         --> fails.  syslog shows several partitions created.
-#           parted shows unallocated space on /dev/sdc and right sized partition for vg-01
-#  --   placed iso-out into ubuntu-vg  --> complains of a lvm with no physical disk in it.
-#  --   make /dev/sdc only 4096;  iso/in & iso/out both in vg-02 (6144)  
-#         --> vg-01 split on 2 physical;  iso-{out,in} shrunk, /dev/sde allocated to ubuntu-vg
-#  --   severely shrunk /dev/sdc (3000)  --> smaller partitions in vg-02, all on /dev/sdc, in spec.
-#  --   made /dev/sdc 2000, too small for both iso-in & iso-out.  --> asymmetric sizes, iso-out too small.
-#  --     /dev/sde is in ubuntu-vg
-#  --   put disk /dev/sde into vg-02
-#  ----------------------------------------------------------------
-#  -- sandbox-1493356162
-#     try using /dev/sde1, /dev/sde2, /dev/sde3 for the 3 physical volumes
-#     to be in vg-01, vg-03, vg-03
-#     ---> works very well.
-#     tuned-2  changed /dev/sdd --> /dev/sdd1  --> ok
-#     tuned-3  changed /dev/sdd1 (vg01) & /dev/sdc --> /dev/sdc1 /dev/sdc2
-#     tuned-4  changed /dev/sdb to /dev/sdb1, reduced from 10000 to 4096 works.
-#     tuned-5  inserted a /dev/sda5 lvm partion  --> nope.
-#     tuned-6  no reverence to /dev/sda*;  multiple instance of vg-01 on /dev/sdb*
 #  ----------------------------------------------------------------
 d-i partman-auto/expert_recipe string                         \
       iso-cd-produce ::                                       \
@@ -67,45 +30,52 @@ d-i partman-auto/expert_recipe string                         \
 	100 1000 10240 lvm		             	      \
 	$defaultignore{ }		 		      \
 	$primary{ }					      \
-        vg_name{ vg-01 }                                      \
+        vg_name{ vg-system }	                              \
 	method{ lvm }					      \
         device{ /dev/sda2 }                                   \
         .                                                     \
-	100 1000 6144 lvm		             	      \
+	100 1000 7680 lvm		             	      \
 	$defaultignore{ }		 		      \
 	$primary{ }					      \
-        vg_name{ vg-02 }                                      \
+        vg_name{ vg-home }	                              \
 	method{ lvm }					      \
         device{ /dev/sdb1 }                                   \
+        .                                                     \
+	100 1000 7680 lvm		             	      \
+	$defaultignore{ }		 		      \
+	$primary{ }					      \
+        vg_name{ vg-data }	    	                      \
+	method{ lvm }					      \
+        device{ /dev/sdc1 }                                   \
         .                                                     \
          512 8192 200% linux-swap $lvmok{ }                   \
         label{ linux-swap }                                   \
         lv_name{ linux-swap }                                 \
         method{ swap }                                        \
         format{ }                                             \
-        in_vg{ vg-01 }                                        \
+        in_vg{ vg-system } 	                              \
         .                                                     \
         7680 8196 8196 ext4  $lvmok{ }                        \
         label{ root }                                         \
         lv_name{ root }                                       \
-        in_vg{ vg-01 }                                        \
+        in_vg{ vg-system }	                              \
         mountpoint{ / }                                       \
         method{ format } format{ }                            \
         use_filesystem{ } filesystem{ ext4 }                  \
 	.						      \
         1024 2048 1536 ext4 $lvmok{ }                         \
-        label{ iso-in }                                       \
-        lv_name{ iso-in }                                     \
-        in_vg{ vg-02 }                                        \
-        mountpoint{ /home/producer/opt/iso/in }               \
+        label{ iso }	                                      \
+        lv_name{ iso }	                                      \
+        in_vg{ vg-home }	                              \
+        mountpoint{ /home }			     	      \
         method{ format } format{ }                            \
         use_filesystem{ } filesystem{ ext4 }                  \
         .                                                     \
-        1356 2048 2048 ext4 $lvmok{ }                         \
-        label{ iso-out }                                      \
-        lv_name{ iso-out }                                    \
-        in_vg{ vg-02 }                                        \
-        mountpoint{ /home/producer/opt/iso/out }              \
+        2048 4096 20480 ext4 $lvmok{ }           	      \
+        label{ var }	                        	      \
+        lv_name{ var }		           	              \
+        in_vg{ vg-data }	                              \
+        mountpoint{ /var }		   		      \
         method{ format } format{ }                            \
         use_filesystem{ } filesystem{ ext4 }                  \
         .                                                     
@@ -145,39 +115,39 @@ d-i clock-setup/utc-auto boolean true
 d-i clock-setup/utc boolean true
 d-i time/zone string US/Central
 d-i clock-setup/ntp boolean true
+d-i clock-setup/ntp-server string lifepod13.quarantine.vima.austin.tx.us
 
 #  ----------------------------------------------------------------
 #  -- Packages, Mirrors, Image
 #  ----------------------------------------------------------------
-#d-i base-installer/kernel/override-image string linux-server
 d-i base-installer/kernel/override-image string linux-image-amd64
 d-i mirror/country string US
-d-i mirror/http/proxy string
 d-i apt-setup/restricted boolean true
 d-i apt-setup/universe boolean true
 d-i pkgsel/install-language-support boolean false
-tasksel tasksel/first multiselect ubuntu-desktop ssh-server
+tasksel tasksel/first multiselect ubuntu-desktop openssh-server
 d-i pkgsel/update-policy select none
-d-i mirror/http/proxy string http://[2001:470:b8ac:0:a00:27ff:fefe:d8d]:3142
+d-i mirror/http/proxy string http://lifepod13.quarantine.vima.austin.tx.us:3142
 
 #  ----------------------------------------------------------------
 #  -- Extra packages
 #  ----------------------------------------------------------------
-
-d-i pkgsel/include string ssh-server build-essential git ntp
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
+d-i apt-setup/multiverse boolean true
+d-i pkgsel/include string openssh-server build-essential git ntp
 
 #  ----------------------------------------------------------------
 #  -- User Creation
+#  -- mkpasswd -m sha-512 is your friend.
 #  ----------------------------------------------------------------
 d-i passwd/root-login boolean false
-#  ----------------------------------------------------------------
-d-i passwd/user-fullname string Producer CDduplication
-d-i passwd/username string producer
+d-i passwd/user-fullname string aubrey IOUnote
+d-i passwd/username string aubrey
 d-i user-setup/allow-password-weak boolean true
 d-i passwd/user-password-crypted password \
   $6$0lJFdl137kYb$c8R4GZtZTyL8oTFCKxHLXukkg6GO8L/K/zb2FexN7EgvT6ZKgElNDSIAixV8Rhj9/UbYBT7QyknwypzN8dfc7.
-#   mkpasswd -m sha-512 is your friend.
-his
+
 #  ----------------------------------------------------------------
 #  -- Grub
 #  ----------------------------------------------------------------
@@ -188,9 +158,31 @@ d-i finish-install/reboot_in_progress note
 #  ----------------------------------------------------------------
 #  -- Custom Commands
 #  ----------------------------------------------------------------
+#  -- https://help.ubuntu.com/14.04/installation-guide/amd64/index.html
+#  -- https://ubuntuforums.org/showthread.php?t=1977570
+#  -- http://stackoverflow.com/questions/33113363/debian-preseed-late-command-not-executed
+#  -- /lib/partman/init.d/01early_command
+#  -- https://github.com/CarlFK/video-stack-deploy/blob/usbstick/scripts/d-i/xenial/preseed_video.cfg
+#  -- debconf-set-selections -c preseed.cfg.
+#  -- http://releases.ubuntu.com/14.04/
 
-d-i preseed/late_command string \
-in-target touch touched-at-sys-install; 
+#  ----------------------------------------------------------------
+#  -- Pressing right-ctl-F1 opens a terminal.
+#  -- export DISPLAY=:0.0; gnome-terminal &
+#  -- inside the terminal> sudo logger -i "Aubrey from gnome-terminal"
+#  ----------------------------------------------------------------
+d-i finish-install/keep-consoles boolean true
 
+#  ----------------------------------------------------------------
+#  -- Test to see if these execute anything.
+#  ----------------------------------------------------------------
+d-i partman/early_command string logger -i "Aubrey 3a"
+d-i partman/early_command string logger -i "Aubrey 3b"
 
+#  ----------------------------------------------------------------
+#  -- I don't know why the following don't work.
+#  ----------------------------------------------------------------
+d-i preseed/early_command string logger -i "Aubrey 1"
+d-i preseed/late_command string logger -i "Aubrey 2"
+d-i partman/late_command string logger -i "Aubrey 4"
 
