@@ -1,4 +1,6 @@
-IOUnote
+# Preseed file & environment 
+## Unattended install of Trusty
+### Custom lvm disk partition recipe
 
 Tested and working under 
 *  VirtualBox 5.1.22 r115126
