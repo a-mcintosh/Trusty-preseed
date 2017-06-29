@@ -38,4 +38,4 @@ mkisofs -D -r -input-charset utf-8 \
 echo '#  ----------------------------------------------------------------'
 ssh amcintosh@host mkdir -p "~"/projects/iounote/$EPOCH
 scp ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso amcintosh@host:'~'/projects/iounote/$EPOCH/.
-scp ./iounote-install-shellscripts/001-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
+scp ./shop-jigs/001-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
