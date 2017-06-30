@@ -1,5 +1,5 @@
-# Preseed file & environment 
-## Unattended install of Trusty
+# Unattended install of Trusty
+## Preseed file & environment 
 ### Custom lvm disk partition recipe
 
 Tested and working under 
