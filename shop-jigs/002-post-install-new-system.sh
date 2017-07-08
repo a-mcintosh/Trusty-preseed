@@ -47,5 +47,5 @@ ssh-keygen -N "This is not the real pass-phrase." -f ~/.ssh/id_rsa
 
 
 #-------------------------------------------------------------------------------------
-sudo apt-get install ntp gparted git
+sudo apt-get install ntp git
 

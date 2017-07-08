@@ -5,6 +5,7 @@
 #  --   iounote-$EPOCH
 #  ----------------------------------------------------------------
 #  -- run this from the directory which contains the new add-on subdirectories.
+#  -- typically, that is also the git repository.
 #  ----------------------------------------------------------------
 #  1. https://askubuntu.com/questions/122505/how-do-i-create-a-completely-unattended-install-of-ubuntu
 #  ----------------------------------------------------------------
@@ -14,6 +15,7 @@ echo pwd: `pwd`
 echo ls ..: `ls ..`
 echo '#  ----------------------------------------------------------------'
 
+echo "\$Id$"$EPOCH > this.epoch
 if [ ! -e isolinux/isolinux.bin ]
   then 
     cp ~/opt/iso/in/isolinux/isolinux.bin isolinux/;
