@@ -181,18 +181,10 @@ d-i finish-install/reboot_in_progress note
 d-i finish-install/keep-consoles boolean true
 
 #  ----------------------------------------------------------------
-#  -- Test to see if these execute anything.
+#  -- Document that these execute.
 #  ----------------------------------------------------------------
 d-i partman/early_command string logger -i "Aubrey 3a"
 d-i partman/early_command string logger -i "Aubrey 3b"
-
-#  ----------------------------------------------------------------
-#  -- I don't know why the following don't work.
-#  ----------------------------------------------------------------
-d-i preseed/early_command string logger -i "Aubrey 1"
-d-i preseed/late_command string touch /target/etc/skel/Aubrey-preseed-touched-after-success-`date '+%s'`
-d-i partman/late_command string logger -i "Aubrey 4"
-
 
 #  ----------------------------------------------------------------
 #  -- 2017-07-08 Grabbed from 
@@ -200,14 +192,7 @@ d-i partman/late_command string logger -i "Aubrey 4"
 #  -- https://wiki.ubuntu.com/UbiquityAutomation
 #  ----------------------------------------------------------------
 ubiquity ubiquity/success_command string \
-  in-target touch /etc/skel/Aubrey-skel-ubiquity-touched-after-success-`date '+%s'`; \
-  in-target touch /home/aubrey/Aubrey-home-ubiquity-touched-after-success-`date '+%s'`; \
-  in-target mkdir -p /home/aubrey/bin; \
-  cp -pr /cdrom/shop-jigs/* /target/home/aubrey/bin/; \
-  in-target chown -R 1000:aubrey /home/aubrey; \
-  in-target sudo touch /home/aubrey/Aubrey-sudo-`date '+%s'`; \
-  in-target touch /home/aubrey/Aubrey-in-target-`date '+%s'`; \
-  in-target sudo apt-get update; \
-  in-target sudo apt-get -y install ntp git openssh-server
+  cp -pr /cdrom/bin/ /target/home/aubrey/bin/; \
+  in-target /home/aubrey/bin/002-post-install-new-system.sh
 
 
