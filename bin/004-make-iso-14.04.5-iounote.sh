@@ -34,10 +34,13 @@ mkisofs -D -r -input-charset utf-8 \
   -m ~/opt/iso/in/isolinux/isolinux.bin \
   -m ~/opt/iso/in/isolinux/txt.cfg \
   -m ~/opt/iso/in/preseed/iounote.seed \
-  -m ~/opt/iso/in/shop-jigs \
+  -m ~/opt/iso/in/bin \
   -o ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso \
      . ~/opt/iso/in/
 echo '#  ----------------------------------------------------------------'
 ssh amcintosh@host mkdir -p "~"/projects/iounote/$EPOCH
 scp ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso amcintosh@host:'~'/projects/iounote/$EPOCH/.
-scp ./shop-jigs/001-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
+scp ./bin/001-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
+ssh amcintosh@host "cd ~/projects/iounote/$EPOCH; ./001-createVM-14.04.5.sh"
+ssh amcintosh@host "VBoxManage startvm iounote-$EPOCH &"
+
