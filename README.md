@@ -18,4 +18,4 @@ This git
 
 To do:  Make it more generic.  This is best done by someone who is adapting it for themself.
 
-##This .iso image auto-starts and formats the disks.
+## This .iso image auto-starts and formats the disks.
