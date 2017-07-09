@@ -19,7 +19,7 @@ This git
 To use:
 * It is a cyclic process, so you can start anywhere, but the entry details change each place.
 * This is code for one of my projects.  You will have to wade through lots of path names and the like and localize them to your project.  
-* You are welcome to make a branch named "vanilla" that isn't infused with my projet.
+* You are welcome to make a branch named "vanilla" that isn't infused with my project.
 * Be sure you can ssh into "host"  This installation can run on "host" or anywhere else.  The resulting VirtualBox will be hosted on "host"
 * export EPOCH=`date '+%s'`
 * create ~/project/$EPOCH
