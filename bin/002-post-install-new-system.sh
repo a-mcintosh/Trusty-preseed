@@ -32,28 +32,31 @@ sudo sed -i "s/ubuntu/iounote/g" /etc/hosts
 #-------------------------------------------------------------------------------------
 
 apt-get update
-apt-get -y install openssh-server ntp git build-essential
+apt-get -y install apache2 git-core ntp openssh-server
 sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
 service ssh restart
+
+usermod -a -G www-data aubrey
+chgrp -R www-data ~www-data
+chmod g+w ~www-data
 
 #-------------------------------------------------------------------------------------
 #  -- make reachable at known address.  Coordinated with DNS server.
 #-------------------------------------------------------------------------------------
-
 sed -i "/^exit 0$/iip addr add 2001:470:b8ac::2017:402/64 dev eth0" /etc/rc.local
 sed -i "/^exit 0$/iip addr add 2001:470:b8ac::1:6/64 dev eth0" /etc/rc.local
 
 sed -i "/^exit 0$/iip addr add fdbf:946a:5c97:1::6/64 dev eth1" /etc/rc.local
+
+mkdir -p ~aubrey/{.ssh,opt/iso/{in,out}}
 (
-  mkdir -p ~aubrey/opt/iso/{in,out}
-  mkdir ~aubrey/.ssh; cd ~aubrey/.ssh
-  ssh-keygen -N "This is not the real pass-phrase." -f ~aubrey/.ssh/id_rsa
+  cd ~aubrey/.ssh
   wget http://lifepod13/ssh-pubkeys/authorized_keys
+  cat ../bin/id_rsa-*.pub >> authorized_keys
 )
 
-
 #-------------------------------------------------------------------------------------
-#  -- Autostart a terminal
+#  -- Autostart a terminal on login
 #-------------------------------------------------------------------------------------
 mkdir -p ~aubrey/.config/autostart
 cat <<EOF > ~aubrey/.config/autostart/gnome-terminal.desktop
@@ -71,7 +74,40 @@ EOF
 
 
 #-------------------------------------------------------------------------------------
+#  -- Virtual Web Host for IOUnote
+#-------------------------------------------------------------------------------------
+cat <<EOF > /etc/apache2/sites-available/001-iounote.conf
+<VirtualHost [2001:470:b8ac::2017:402]:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/www-iounote
+	ServerName iounote.vima.austin.tx.us
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+a2ensite 001-iounote.conf
+(
+cd ~
+echo `pwd` > ~aubrey/info.pwd
+cd ~root
+echo `pwd` >> ~aubrey/info.pwd
+cd ~www-data
+echo `pwd` >> ~aubrey/info.pwd
+ssh-keygen -f ~aubrey/.ssh/id_rsa_rootkey #too force .ssh directory initialization 'I am Groot.'
+mv ~aubrey/bin/id_rsa* ~aubrey/.ssh/
+chmod 0400 ~aubrey/.ssh/id_rsa
+mkdir -p ~root/.ssh
+cp -p ~aubrey/.ssh/id_rsa{,.pub} ~root/.ssh
+mkdir -p ~/.ssh
+cp -p ~aubrey/.ssh/id_rsa{,.pub} ~/.ssh
+git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git
+)
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+#-------------------------------------------------------------------------------------
 sudo chown -R 1000:1000 ~aubrey/.
+logger -i "Aubrey, this is the end."
 
 
 

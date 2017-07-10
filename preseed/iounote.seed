@@ -192,6 +192,7 @@ d-i partman/early_command string logger -i "Aubrey 3b"
 #  -- https://wiki.ubuntu.com/UbiquityAutomation
 #  ----------------------------------------------------------------
 ubiquity ubiquity/success_command string \
+  logger -i "Aubrey, this is a success."; \
   cp -pr /cdrom/bin/ /target/home/aubrey/bin/; \
   in-target /home/aubrey/bin/002-post-install-new-system.sh
 

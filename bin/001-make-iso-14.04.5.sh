@@ -1,10 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 #  ----------------------------------------------------------------
 #  -- Aubrey McIntosh, Ph.D.  $Id$
-#  -- make an attendless Ubuntu installation CD
-#  --   iounote-$EPOCH
+#  -- make an attendless Ubuntu installation CD for 14.04.5 LTS (Trusty Tahr)
 #  ----------------------------------------------------------------
-#  -- run this from the directory which contains the new add-on subdirectories.
+#  -- run this from ~/opt/iso  
 #  -- typically, that is also the git repository.
 #  ----------------------------------------------------------------
 #  1. https://askubuntu.com/questions/122505/how-do-i-create-a-completely-unattended-install-of-ubuntu
@@ -22,6 +21,11 @@ if [ ! -e isolinux/isolinux.bin ]
     chmod u+w isolinux/isolinux.bin
 fi
 
+ssh-keygen -N "This becomes an authorized key." -f bin/id_rsa-$EPOCH
+#  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
+ssh-keygen -N "" -f bin/id_rsa  #One shot git key to clone WWW.  No passphrase
+ssh-copy-id -i bin/id_rsa git@iounote.quarantine
+
 mkisofs -D -r -input-charset utf-8 \
   -V iounote-$EPOCH -cache-inodes -J -l \
   -b isolinux/isolinux.bin -c isolinux/boot.cat \
@@ -35,6 +39,7 @@ mkisofs -D -r -input-charset utf-8 \
   -m ~/opt/iso/in/isolinux/txt.cfg \
   -m ~/opt/iso/in/preseed/iounote.seed \
   -m ~/opt/iso/in/bin \
+  -m id_rsa-$EPOCH \
   -o ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso \
      . ~/opt/iso/in/
 echo '#  ----------------------------------------------------------------'
