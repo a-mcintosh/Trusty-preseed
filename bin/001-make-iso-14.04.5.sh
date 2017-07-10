@@ -27,7 +27,7 @@ ssh-keygen -N "" -f bin/id_rsa  #One shot git key to clone WWW.  No passphrase
 ssh-copy-id -i bin/id_rsa git@iounote.quarantine
 
 mkisofs -D -r -input-charset utf-8 \
-  -V iounote-$EPOCH -cache-inodes -J -l \
+  -V IOUnote-$EPOCH -cache-inodes -J -l \
   -b isolinux/isolinux.bin -c isolinux/boot.cat \
   -no-emul-boot \
   -boot-load-size 4 -boot-info-table \
@@ -40,6 +40,11 @@ mkisofs -D -r -input-charset utf-8 \
   -m ~/opt/iso/in/preseed/iounote.seed \
   -m ~/opt/iso/in/bin \
   -m id_rsa-$EPOCH \
+  -m /home/aubrey/opt/iso/in/README.md \
+  -m /home/aubrey/opt/iso/in/this.epoch \
+  -m /home/aubrey/opt/iso/in/.gitattributes \
+  -m /home/aubrey/opt/iso/in/.gitignore \
+  -m /home/aubrey/opt/iso/in/.git \
   -o ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso \
      . ~/opt/iso/in/
 echo '#  ----------------------------------------------------------------'

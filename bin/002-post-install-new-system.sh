@@ -75,8 +75,19 @@ EOF
 
 #-------------------------------------------------------------------------------------
 #  -- Virtual Web Host for IOUnote
+#  -- I tried a wild card inside the IPv6 address, no bueno.
 #-------------------------------------------------------------------------------------
 cat <<EOF > /etc/apache2/sites-available/001-iounote.conf
+<VirtualHost [2001:470:b8ac::2017:401]:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/www-iounote
+	ServerName iounote.vima.austin.tx.us
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+cat <<EOF > /etc/apache2/sites-available/002-iounote.conf
 <VirtualHost [2001:470:b8ac::2017:402]:80>
 	ServerAdmin webmaster@localhost
 	DocumentRoot /var/www/www-iounote
@@ -86,19 +97,29 @@ cat <<EOF > /etc/apache2/sites-available/001-iounote.conf
 </VirtualHost>
 EOF
 
-a2ensite 001-iounote.conf
+a2ensite 002-iounote.conf
 (
+
+#-------------------------------------------------------------------------------------
+#  -- document where different directories are
+#-------------------------------------------------------------------------------------
 cd ~
 echo `pwd` > ~aubrey/info.pwd
 cd ~root
 echo `pwd` >> ~aubrey/info.pwd
 cd ~www-data
 echo `pwd` >> ~aubrey/info.pwd
-ssh-keygen -f ~aubrey/.ssh/id_rsa_rootkey #too force .ssh directory initialization 'I am Groot.'
+
+#-------------------------------------------------------------------------------------
 mv ~aubrey/bin/id_rsa* ~aubrey/.ssh/
 chmod 0400 ~aubrey/.ssh/id_rsa
 mkdir -p ~root/.ssh
 cp -p ~aubrey/.ssh/id_rsa{,.pub} ~root/.ssh
+
+#-------------------------------------------------------------------------------------
+# I can't see this directory after the install is finished.  However,
+# the git clone can't log in without this.
+#-------------------------------------------------------------------------------------
 mkdir -p ~/.ssh
 cp -p ~aubrey/.ssh/id_rsa{,.pub} ~/.ssh
 git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git
@@ -107,7 +128,7 @@ git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 #-------------------------------------------------------------------------------------
 sudo chown -R 1000:1000 ~aubrey/.
-logger -i "Aubrey, this is the end."
-
-
+logger -i "Aubrey, why don't I show up in syslog?"
+su aubrey
+touch ~/aubrey.directory.item
 
