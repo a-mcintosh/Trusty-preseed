@@ -129,6 +129,4 @@ git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git
 #-------------------------------------------------------------------------------------
 sudo chown -R 1000:1000 ~aubrey/.
 logger -i "Aubrey, why don't I show up in syslog?"
-su aubrey
-touch ~/aubrey.directory.item
 

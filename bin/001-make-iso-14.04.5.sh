@@ -23,7 +23,8 @@ fi
 
 ssh-keygen -N "This becomes an authorized key." -f bin/id_rsa-$EPOCH
 #  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
-ssh-keygen -N "" -f bin/id_rsa  #One shot git key to clone WWW.  No passphrase
+ssh-keygen -f bin/id_rsa  #One shot git key to clone WWW.  secret passphrase
+#tbd sed -i /ssh/s/^/command=git\ / bin/id_rsa.pub
 ssh-copy-id -i bin/id_rsa git@iounote.quarantine
 
 mkisofs -D -r -input-charset utf-8 \
@@ -50,7 +51,7 @@ mkisofs -D -r -input-charset utf-8 \
 echo '#  ----------------------------------------------------------------'
 ssh amcintosh@host mkdir -p "~"/projects/iounote/$EPOCH
 scp ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso amcintosh@host:'~'/projects/iounote/$EPOCH/.
-scp ./bin/001-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
-ssh amcintosh@host "cd ~/projects/iounote/$EPOCH; ./001-createVM-14.04.5.sh"
+scp ./bin/002-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
+ssh amcintosh@host "cd ~/projects/iounote/$EPOCH; ./002-createVM-14.04.5.sh"
 ssh amcintosh@host "VBoxManage startvm iounote-$EPOCH &"
 

@@ -168,6 +168,7 @@ d-i finish-install/reboot_in_progress note
 #  -- http://releases.ubuntu.com/14.04/
 #  -- https://github.com/histamineblkr/ubuntu-unattended-install/blob/master/ks.preseed
 #  -- http://www.tomechangosubanana.com/preseed.cfg
+#  -- https://github.com/cobbler/cobbler/wiki/Using-template-scripts-for-Debian-and-Ubuntu-seeds
 
 #  ----------------------------------------------------------------
 #  -- Pressing right-ctl-F1 opens a terminal.
@@ -193,8 +194,9 @@ d-i partman/early_command string logger -i "Aubrey 3b"
 #  ----------------------------------------------------------------
 ubiquity ubiquity/success_command string \
   cp -pr /cdrom/bin/ /target/home/aubrey/bin/; \
-  in-target /home/aubrey/bin/002-post-install-new-system.sh \
-  cd /target/home/aubrey/opt/iso \
-  git clone /cdrom/Trusty-preseed
+  in-target /home/aubrey/bin/003-post-install-new-system.sh; \
+  mount /dev/sr0 /target/cdrom; \
+  in-target git clone /cdrom /home/aubrey/opt/iso/Trusty-preseed; \
+  cat - > /home/aubrey/terminal.input
 
 
