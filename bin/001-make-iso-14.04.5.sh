@@ -38,6 +38,7 @@ mkisofs -D -r -input-charset utf-8 \
   -m ~/opt/iso/in/isolinux/isolinux.bin \
   -m ~/opt/iso/in/isolinux/txt.cfg \
   -m ~/opt/iso/in/preseed/iounote.seed \
+  -m ~/opt/iso/in/preseed/IOUnote.seed \
   -m ~/opt/iso/in/bin \
   -m id_rsa-$EPOCH \
   -m /home/aubrey/opt/iso/in/README.md \
