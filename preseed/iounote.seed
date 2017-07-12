@@ -192,9 +192,9 @@ d-i partman/early_command string logger -i "Aubrey 3b"
 #  -- https://wiki.ubuntu.com/UbiquityAutomation
 #  ----------------------------------------------------------------
 ubiquity ubiquity/success_command string \
+  mount --bind /cdrom /target/cdrom; \
   cp -pr /cdrom/bin/ /target/home/aubrey/bin/; \
   in-target /home/aubrey/bin/002-post-install-new-system.sh; \
-  mount --bind /cdrom /target/cdrom; \
   in-target git clone /cdrom /home/aubrey/opt/iso/Trusty-preseed
 
 

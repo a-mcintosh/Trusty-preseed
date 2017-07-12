@@ -48,12 +48,7 @@ sed -i "/^exit 0$/iip addr add 2001:470:b8ac::1:6/64 dev eth0" /etc/rc.local
 
 sed -i "/^exit 0$/iip addr add fdbf:946a:5c97:1::6/64 dev eth1" /etc/rc.local
 
-mkdir -p ~aubrey/{.ssh,opt/iso/{in,out}}
-(
-  cd ~aubrey/.ssh
-  wget http://lifepod13/ssh-pubkeys/authorized_keys
-  cat ../bin/id_rsa-*.pub >> authorized_keys
-)
+mkdir -p ~aubrey/opt/iso/{in,out}
 
 #-------------------------------------------------------------------------------------
 #  -- Autostart a terminal on login
@@ -71,7 +66,6 @@ Name=Terminal
 Comment[en_US]=I always use a terminal
 Comment=I always use a terminal
 EOF
-
 
 #-------------------------------------------------------------------------------------
 #  -- Virtual Web Host for IOUnote
@@ -98,37 +92,48 @@ cat <<EOF > /etc/apache2/sites-available/002-iounote.conf
 EOF
 
 a2ensite 002-iounote.conf
-(
+
 
 #-------------------------------------------------------------------------------------
+#  -- setup multiple .ssh directories
 #  -- document where different directories are
 #-------------------------------------------------------------------------------------
+(  
 cd ~
 echo `pwd` > ~aubrey/info.pwd
 cd ~root
 echo `pwd` >> ~aubrey/info.pwd
 cd ~www-data
 echo `pwd` >> ~aubrey/info.pwd
-
-#-------------------------------------------------------------------------------------
-mv ~aubrey/bin/id_rsa* ~aubrey/.ssh/
-chmod 0400 ~aubrey/.ssh/id_rsa
-mkdir -p ~root/.ssh
-cp -p ~aubrey/.ssh/id_rsa{,.pub} ~root/.ssh
-
-#-------------------------------------------------------------------------------------
-# I can't see this directory after the install is finished.  However,
-# the git clone can't log in without this.
-#-------------------------------------------------------------------------------------
-mkdir -p ~/.ssh
-cp -p ~aubrey/.ssh/id_rsa{,.pub} ~/.ssh
-git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git
 )
+
+#-------------------------------------------------------------------------------------
+#  -- set up the first one
+#-------------------------------------------------------------------------------------
+mv ~aubrey/bin/.ssh ~aubrey
+chmod -R u+w ~aubrey/.ssh
+(
+  cd ~aubrey/.ssh
+  chmod 0400 ~aubrey/.ssh/id_rsa
+  wget http://lifepod13/ssh-pubkeys/authorized_keys
+  cat id_rsa-*.pub >> authorized_keys
+  chmod -R g-rw,o-rw ~aubrey/.ssh/
+
+#-------------------------------------------------------------------------------------
+#  -- copy it to the two others.
+# I can't see ~/.ssh after the install is finished.  However,
+# the git clone can't log in without it.
+#-------------------------------------------------------------------------------------
+  mkdir -p {~,~root}/.ssh
+  cp -pr ~aubrey/.ssh/* ~root/.ssh
+  cp -pr ~aubrey/.ssh/*     ~/.ssh
+)
+
 
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 #-------------------------------------------------------------------------------------
 sudo chown -R 1000:1000 ~aubrey/.
 logger -i "Aubrey, why don't I show up in syslog?"
-su aubrey
-touch ~/aubrey.directory.item
+
+git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git
 

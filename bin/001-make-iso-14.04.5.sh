@@ -21,10 +21,10 @@ if [ ! -e isolinux/isolinux.bin ]
     chmod u+w isolinux/isolinux.bin
 fi
 
-ssh-keygen -N "This becomes an authorized key." -f bin/id_rsa-$EPOCH
+ssh-keygen -N "This becomes an authorized key." -f bin/.ssh/id_rsa-$EPOCH
 #  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
-ssh-keygen -N "" -f bin/id_rsa  #One shot git key to clone WWW.  No passphrase
-ssh-copy-id -i bin/id_rsa git@iounote.quarantine
+ssh-keygen -N "" -f bin/.ssh/id_rsa  #One shot git key to clone WWW.  No passphrase
+ssh-copy-id -i bin/.ssh/id_rsa git@iounote.quarantine
 
 mkisofs -D -r -input-charset utf-8 \
   -V IOUnote-$EPOCH -cache-inodes -J -l \
