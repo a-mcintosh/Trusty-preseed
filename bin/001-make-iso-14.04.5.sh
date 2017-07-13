@@ -21,6 +21,7 @@ if [ ! -e isolinux/isolinux.bin ]
     chmod u+w isolinux/isolinux.bin
 fi
 
+rm bin/.ssh/id_rsa{,-$EPOCH}{,.pub}
 ssh-keygen -N "This becomes an authorized key." -f bin/.ssh/id_rsa-$EPOCH
 #  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
 ssh-keygen -N "" -f bin/.ssh/id_rsa  #One shot git key to clone WWW.  No passphrase

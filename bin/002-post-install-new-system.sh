@@ -130,8 +130,7 @@ chmod -R u+w ~aubrey/.ssh
 )
 
 ssh git@iounote.quarantine.vima.austin.tx.us pwd  #force known_hosts update
-git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote1
-git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote2
+git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote
 
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noetls 
 #-------------------------------------------------------------------------------------
