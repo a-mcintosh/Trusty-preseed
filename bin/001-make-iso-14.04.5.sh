@@ -17,7 +17,7 @@ echo '#  ----------------------------------------------------------------'
 echo "\$Id$"$EPOCH > this.epoch
 if [ ! -e isolinux/isolinux.bin ]
   then 
-    cp ~/opt/iso/in/isolinux/isolinux.bin isolinux/;
+    cp ../cdrom/isolinux/isolinux.bin isolinux/;
     chmod u+w isolinux/isolinux.bin
 fi
 
@@ -34,24 +34,24 @@ mkisofs -D -r -input-charset utf-8 \
   -boot-load-size 4 -boot-info-table \
   -m '*~' \
   -m lost+found \
-  -m ~/opt/iso/in/origin.txt \
-  -m ~/opt/iso/in/isolinux/boot.cat \
-  -m ~/opt/iso/in/isolinux/isolinux.bin \
-  -m ~/opt/iso/in/isolinux/txt.cfg \
-  -m ~/opt/iso/in/preseed/iounote.seed \
-  -m ~/opt/iso/in/preseed/IOUnote.seed \
-  -m ~/opt/iso/in/bin \
+  -m ../cdrom/origin.txt \
+  -m ../cdrom/isolinux/boot.cat \
+  -m ../cdrom/isolinux/isolinux.bin \
+  -m ../cdrom/isolinux/txt.cfg \
+  -m ../cdrom/preseed/iounote.seed \
+  -m ../cdrom/preseed/IOUnote.seed \
+  -m ../cdrom/bin \
   -m id_rsa-$EPOCH \
-  -m /home/aubrey/opt/iso/in/README.md \
-  -m /home/aubrey/opt/iso/in/this.epoch \
-  -m /home/aubrey/opt/iso/in/.gitattributes \
-  -m /home/aubrey/opt/iso/in/.gitignore \
-  -m /home/aubrey/opt/iso/in/.git \
-  -o ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso \
-     . ~/opt/iso/in/
+  -m ../cdrom/README.md \
+  -m ../cdrom/this.epoch \
+  -m ../cdrom/.gitattributes \
+  -m ../cdrom/.gitignore \
+  -m ../cdrom/.git \
+  -o ../tmp/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso \
+     . ../cdrom/
 echo '#  ----------------------------------------------------------------'
 ssh amcintosh@host mkdir -p "~"/projects/iounote/$EPOCH
-scp ~/opt/iso/out/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso amcintosh@host:'~'/projects/iounote/$EPOCH/.
+scp ../tmp/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso amcintosh@host:'~'/projects/iounote/$EPOCH/.
 scp ./bin/001-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
 ssh amcintosh@host "cd ~/projects/iounote/$EPOCH; ./001-createVM-14.04.5.sh"
 ssh amcintosh@host "VBoxManage startvm iounote-$EPOCH &"

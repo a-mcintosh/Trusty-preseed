@@ -48,7 +48,7 @@ sed -i "/^exit 0$/iip addr add 2001:470:b8ac::1:6/64 dev eth0" /etc/rc.local
 
 sed -i "/^exit 0$/iip addr add fdbf:946a:5c97:1::6/64 dev eth1" /etc/rc.local
 
-mkdir -p ~aubrey/opt/iso/{in,out}
+mkdir -p ~aubrey/opt/iso/{cdrom,tmp}
 
 #-------------------------------------------------------------------------------------
 #  -- Autostart a terminal on login
@@ -105,6 +105,7 @@ cd ~root
 echo `pwd` >> ~aubrey/info.pwd
 cd ~www-data
 echo `pwd` >> ~aubrey/info.pwd
+touch ~aubrey/I-am-user-$USER
 )
 
 #-------------------------------------------------------------------------------------
