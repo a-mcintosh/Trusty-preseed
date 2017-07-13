@@ -129,11 +129,13 @@ chmod -R u+w ~aubrey/.ssh
   cp -pr ~aubrey/.ssh/*     ~/.ssh
 )
 
+ssh git@iounote.quarantine.vima.austin.tx.us pwd  #force known_hosts update
+git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote1
+git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote2
 
-# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noetls 
 #-------------------------------------------------------------------------------------
 sudo chown -R 1000:1000 ~aubrey/.
 logger -i "Aubrey, why don't I show up in syslog?"
 
-git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git
 

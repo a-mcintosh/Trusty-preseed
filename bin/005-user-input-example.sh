@@ -40,6 +40,6 @@ db_go
 db_get my-install/asktheuser
 USERRESPONSE=$RET
 
-echo $USERRESPONSE > /target/var/log/TheUsersResponse
-chroot /target bash -c "cat /var/log/TheUsersResponse > /var/log/SomethingElse"
+echo $USERRESPONSE > /var/log/TheUsersResponse
+bash -c "cat /var/log/TheUsersResponse > /var/log/SomethingElse"
 
