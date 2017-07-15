@@ -104,15 +104,15 @@ d-i keyboard-configuration/layoutcode string us
 #  ----------------------------------------------------------------
 #  -- Network --- I think these are not used in Ubiquity
 #  ----------------------------------------------------------------
-#d-i netcfg/hostname string cloner
-#d-i netcfg/get_domain string auto
-#d-i netcfg/choose_interface select auto
+d-i netcfg/hostname string cloner
+d-i netcfg/get_domain string auto
+d-i netcfg/choose_interface select auto
 
 #  ----------------------------------------------------------------
 #  -- Clock
 #  ----------------------------------------------------------------
 d-i clock-setup/utc-auto boolean true
-d-i clock-setup/utc boolean false
+d-i clock-setup/utc boolean true
 d-i time/zone string US/Central
 d-i clock-setup/ntp boolean true
 d-i clock-setup/ntp-server string lifepod13.quarantine.vima.austin.tx.us
@@ -135,11 +135,12 @@ d-i mirror/http/proxy string http://lifepod13.quarantine.vima.austin.tx.us:3142
 d-i apt-setup/restricted boolean true
 d-i apt-setup/universe boolean true
 d-i apt-setup/multiverse boolean true
-#d-i pkgsel/include string openssh-server build-essential git ntp
+d-i pkgsel/include string openssh-server build-essential git ntp
 
 #  ----------------------------------------------------------------
 #  -- User Creation
 #  -- mkpasswd -m sha-512 is your friend.
+#  -- see also isolinux/txt.cfg
 #  ----------------------------------------------------------------
 d-i passwd/root-login boolean false
 d-i user-setup/allow-password-weak boolean true
@@ -185,7 +186,13 @@ d-i finish-install/keep-consoles boolean true
 d-i partman/early_command string \
   /cdrom/bin/003-early-command.sh; \
   sed -i s/passwd.username/$(debconf-get passwd/username)/g /tmp/bin/*.sh; \
-  logger -i "$(debconf-get passwd/username) 3a"
+  touch /etc/skel/ahaw-`date '+%s'`; \
+  ssh -i /tmp/bin/.ssh/id_rsa git@iounote.quarantine.vima.austin.tx.us ls; \
+  logger -i "$(debconf-get passwd/username)"; \
+  logger -i "$(debconf-get netcfg/hostname)"; \
+  logger -i "$(debconf-get netcfg/get_domain)"; \
+  logger -i "$(debconf-get netcfg/choose_interface)"; \
+  ls -laR /usr/lib/ubiquity
 
 #  ----------------------------------------------------------------
 #  -- 2017-07-08 Grabbed from 
@@ -196,6 +203,7 @@ d-i partman/early_command string \
 ubiquity ubiquity/success_command string \
   mount --bind /cdrom /target/cdrom; \
   mount --bind /tmp /target/tmp; \
+  ls -laR /usr/lib/ubiquity; \
   in-target /tmp/bin/002-post-install-new-system.sh; \
   in-target /tmp/bin/006-git-server-setup.sh
 

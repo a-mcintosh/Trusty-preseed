@@ -3,5 +3,7 @@
 #  -- Aubrey McIntosh, Ph.D.  $Id$
 #-------------------------------------------------------------------------------------
 cp -pr /cdrom/bin/ /tmp/
-ls -laR /tmp
+chmod -R go=,u=rwx /tmp/bin/.ssh
+chmod        u=rw  /tmp/bin/.ssh
+ls -laR /tmp/bin
 

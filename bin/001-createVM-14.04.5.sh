@@ -7,6 +7,7 @@
 aux=`pwd`
 thisEpoch=`basename $aux`; export thisEpoch; echo for epoch $thisEpoch
 
+VBoxManage unregistervm "iounote-$thisEpoch" --delete
 VBoxManage createvm --name "iounote-$thisEpoch" --ostype Ubuntu_64 --register
 VBoxManage modifyvm "iounote-$thisEpoch" --description "Ubuntu 14.04.5 Environment for IOUnote environment." 
 VBoxManage modifyvm "iounote-$thisEpoch" --clipboard bidirectional --memory 1024 --nic1 bridged --vram 10 --bridgeadapter1 eth0 --cableconnected1=off

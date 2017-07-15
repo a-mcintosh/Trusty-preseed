@@ -10,7 +10,8 @@ wget http://lifepod13/ssh-pubkeys/authorized_keys
 
 
 #-------------------------------------------------------------------------------------
-adduser --home /var/git --disabled-password --shell /usr/bin/git-shell --gecos GECOS git
+#  -- --gecos GECOS 
+adduser --home /var/git --disabled-password --shell /usr/bin/git-shell --gecos "git manager,,,utility account" git
 
 
 #-------------------------------------------------------------------------------------

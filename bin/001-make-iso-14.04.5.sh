@@ -12,18 +12,28 @@
 echo '#  ----------------------------------------------------------------'
 echo pwd: `pwd`
 echo ls ..: `ls ..`
+echo $1
+if [ -z ${1+x} ]; then 
+  echo "Usage: 001-make-iso-14.04.5.sh <quoted ssh passphrase>"; 
+  exit 1
+else echo "The passphrase is '$1'"; 
+fi
 echo '#  ----------------------------------------------------------------'
 
 echo "\$Id$"$EPOCH > this.epoch
 if [ ! -e isolinux/isolinux.bin ]
   then 
-    cp ../cdrom/isolinux/isolinux.bin isolinux/;
+    cp ../cdrom/isolinux/isolinux.byein isolinux/;
     chmod u+w isolinux/isolinux.bin
 fi
 
 rm bin/.ssh/id_rsa{,-$EPOCH}{,.pub}
 ssh-keygen -N "This becomes an authorized key." -f bin/.ssh/id_rsa-$EPOCH
 #  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
+
+ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot-$EPOCH
+ssh-copy-id -i bin/.ssh/id_rsa-one-shot-$EPOCH amcintosh@host.quarantine
+
 ssh-keygen -N "" -f bin/.ssh/id_rsa  #One shot git key to clone WWW.  No passphrase
 ssh-copy-id -i bin/.ssh/id_rsa git@iounote.quarantine
 

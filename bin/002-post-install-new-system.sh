@@ -34,7 +34,9 @@ sudo sed -i "s/ubuntu/iounote/g" /etc/hosts
 apt-get update
 apt-get -y install apache2 git-core ntp openssh-server
 sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+sed -i 's|ntp.ubuntu.com|lifepod13.quarantine.vima.austin.tx.us|g' /etc/ntp.conf
 service ssh restart
+service ntp restart
 
 usermod -a -G www-data passwd.username
 chgrp -R www-data ~www-data
@@ -109,17 +111,16 @@ touch ~passwd.username/I-am-user-$USER
 )
 
 #-------------------------------------------------------------------------------------
-#  -- set up the first one
+#  -- set up the first .ssh directory
 #-------------------------------------------------------------------------------------
 cp -pr /tmp/bin/ ~passwd.username/bin/
 mv ~passwd.username/bin/.ssh ~passwd.username
-chmod -R u+w ~passwd.usernamename/.ssh
 (
   cd ~passwd.username/.ssh
-  chmod 0400 ~passwd.username/.ssh/id_rsa
+  chmod 0700 ~passwd.username/.ssh/id_rsa
   wget http://lifepod13/ssh-pubkeys/authorized_keys
   cat id_rsa-*.pub >> authorized_keys
-  chmod -R u+r,g-rw,o-rw ~passwd.username/.ssh/
+  chmod -R u+r,g0-rw ~passwd.username/.ssh/
 
 #-------------------------------------------------------------------------------------
 #  -- copy it to the two others.
@@ -132,6 +133,7 @@ chmod -R u+w ~passwd.usernamename/.ssh
 )
 
 ssh git@iounote.quarantine.vima.austin.tx.us pwd  #force known_hosts update
+ssh amcintosh@host "VBoxManage snapshot iounote-$EPOCH take late-install --live &"
 git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote
 git clone /cdrom ~passwd.username/opt/iso/Trusty-preseed
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noetls 
