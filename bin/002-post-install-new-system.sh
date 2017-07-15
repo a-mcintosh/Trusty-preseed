@@ -10,7 +10,7 @@
 
 
 #-------------------------------------------------------------------------------------
-cat <<EOF >> ~aubrey/.profile
+cat <<EOF >> ~passwd.username/.profile
 
 export EPOCH=\`date '+%s'\`
 touch .bash_history-\$EPOCH
@@ -36,7 +36,7 @@ apt-get -y install apache2 git-core ntp openssh-server
 sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
 service ssh restart
 
-usermod -a -G www-data aubrey
+usermod -a -G www-data passwd.username
 chgrp -R www-data ~www-data
 chmod g+w ~www-data
 
@@ -48,13 +48,13 @@ sed -i "/^exit 0$/iip addr add 2001:470:b8ac::1:6/64 dev eth0" /etc/rc.local
 
 sed -i "/^exit 0$/iip addr add fdbf:946a:5c97:1::6/64 dev eth1" /etc/rc.local
 
-mkdir -p ~aubrey/opt/iso/{cdrom,tmp}
+mkdir -p ~passwd.username/opt/iso/{cdrom,tmp}
 
 #-------------------------------------------------------------------------------------
 #  -- Autostart a terminal on login
 #-------------------------------------------------------------------------------------
-mkdir -p ~aubrey/.config/autostart
-cat <<EOF > ~aubrey/.config/autostart/gnome-terminal.desktop
+mkdir -p ~passwd.username/.config/autostart
+cat <<EOF > ~passwd.username/.config/autostart/gnome-terminal.desktop
 [Desktop Entry]
 Type=Application
 Exec=gnome-terminal --geometry 80x25+800+800
@@ -100,25 +100,26 @@ a2ensite 002-iounote.conf
 #-------------------------------------------------------------------------------------
 (  
 cd ~
-echo `pwd` > ~aubrey/info.pwd
+echo `pwd` > ~passwd.username/info.pwd
 cd ~root
-echo `pwd` >> ~aubrey/info.pwd
+echo `pwd` >> ~passwd.username/info.pwd
 cd ~www-data
-echo `pwd` >> ~aubrey/info.pwd
-touch ~aubrey/I-am-user-$USER
+echo `pwd` >> ~passwd.username/info.pwd
+touch ~passwd.username/I-am-user-$USER
 )
 
 #-------------------------------------------------------------------------------------
 #  -- set up the first one
 #-------------------------------------------------------------------------------------
-mv ~aubrey/bin/.ssh ~aubrey
-chmod -R u+w ~aubrey/.ssh
+cp -pr /tmp/bin/ ~passwd.username/bin/
+mv ~passwd.username/bin/.ssh ~passwd.username
+chmod -R u+w ~passwd.usernamename/.ssh
 (
-  cd ~aubrey/.ssh
-  chmod 0400 ~aubrey/.ssh/id_rsa
+  cd ~passwd.username/.ssh
+  chmod 0400 ~passwd.username/.ssh/id_rsa
   wget http://lifepod13/ssh-pubkeys/authorized_keys
   cat id_rsa-*.pub >> authorized_keys
-  chmod -R g-rw,o-rw ~aubrey/.ssh/
+  chmod -R u+r,g-rw,o-rw ~passwd.username/.ssh/
 
 #-------------------------------------------------------------------------------------
 #  -- copy it to the two others.
@@ -126,16 +127,16 @@ chmod -R u+w ~aubrey/.ssh
 # the git clone can't log in without it.
 #-------------------------------------------------------------------------------------
   mkdir -p {~,~root}/.ssh
-  cp -pr ~aubrey/.ssh/* ~root/.ssh
-  cp -pr ~aubrey/.ssh/*     ~/.ssh
+  cp -pr ~passwd.username/.ssh/* ~root/.ssh
+  cp -pr ~passwd.username/.ssh/*     ~/.ssh
 )
 
 ssh git@iounote.quarantine.vima.austin.tx.us pwd  #force known_hosts update
 git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote
-
+git clone /cdrom ~passwd.username/opt/iso/Trusty-preseed
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noetls 
 #-------------------------------------------------------------------------------------
-sudo chown -R 1000:1000 ~aubrey/.
+sudo chown -R 1000:1000 ~passwd.username/.
 logger -i "Aubrey, why don't I show up in syslog?"
 
 

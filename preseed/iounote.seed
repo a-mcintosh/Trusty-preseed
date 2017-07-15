@@ -142,8 +142,6 @@ d-i apt-setup/multiverse boolean true
 #  -- mkpasswd -m sha-512 is your friend.
 #  ----------------------------------------------------------------
 d-i passwd/root-login boolean false
-d-i passwd/user-fullname string aubrey IOUnote
-d-i passwd/username string aubrey
 d-i user-setup/allow-password-weak boolean true
 d-i passwd/user-password-crypted password \
   $6$0lJFdl137kYb$c8R4GZtZTyL8oTFCKxHLXukkg6GO8L/K/zb2FexN7EgvT6ZKgElNDSIAixV8Rhj9/UbYBT7QyknwypzN8dfc7.
@@ -168,11 +166,12 @@ d-i finish-install/reboot_in_progress note
 #  -- http://releases.ubuntu.com/14.04/
 #  -- https://github.com/histamineblkr/ubuntu-unattended-install/blob/master/ks.preseed
 #  -- http://www.tomechangosubanana.com/preseed.cfg
+#  -- perhaps /var/cache/debconf is interesting.
 
 #  ----------------------------------------------------------------
 #  -- Pressing right-ctl-F1 opens a terminal.
 #  -- export DISPLAY=:0.0; gnome-terminal &
-#  -- inside the terminal> sudo logger -i "Aubrey from gnome-terminal"
+#  -- inside the terminal> sudo logger -i "$(debconf-get passwd/username) from gnome-terminal"
 #  ----------------------------------------------------------------
 
 #  ----------------------------------------------------------------
@@ -183,18 +182,22 @@ d-i finish-install/keep-consoles boolean true
 #  ----------------------------------------------------------------
 #  -- Document that these execute.
 #  ----------------------------------------------------------------
-d-i partman/early_command string logger -i "Aubrey 3a"
-d-i partman/early_command string logger -i "Aubrey 3b"
+d-i partman/early_command string \
+  /cdrom/bin/003-early-command.sh; \
+  sed -i s/passwd.username/$(debconf-get passwd/username)/g /tmp/bin/*.sh; \
+  logger -i "$(debconf-get passwd/username) 3a"
 
 #  ----------------------------------------------------------------
 #  -- 2017-07-08 Grabbed from 
 #  -- https://github.com/histamineblkr/ubuntu-unattended-install/blob/master/ks.preseed
 #  -- https://wiki.ubuntu.com/UbiquityAutomation
+#  -- does not work after success ---> $(debconf-get passwd/username)
 #  ----------------------------------------------------------------
 ubiquity ubiquity/success_command string \
   mount --bind /cdrom /target/cdrom; \
-  cp -pr /cdrom/bin/ /target/home/aubrey/bin/; \
-  in-target /home/aubrey/bin/002-post-install-new-system.sh; \
-  in-target git clone /cdrom /home/aubrey/opt/iso/Trusty-preseed
+  mount --bind /tmp /target/tmp; \
+  in-target /tmp/bin/002-post-install-new-system.sh; \
+  in-target /tmp/bin/006-git-server-setup.sh
+
 
 
