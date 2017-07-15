@@ -31,8 +31,8 @@ rm bin/.ssh/id_rsa{,-$EPOCH}{,.pub}
 ssh-keygen -N "This becomes an authorized key." -f bin/.ssh/id_rsa-$EPOCH
 #  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
 
-ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot-$EPOCH
-ssh-copy-id -i bin/.ssh/id_rsa-one-shot-$EPOCH amcintosh@host.quarantine
+ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot -C oneshot@host
+ssh-copy-id -i bin/.ssh/id_rsa-one-shot amcintosh@host.quarantine
 
 ssh-keygen -N "" -f bin/.ssh/id_rsa  #One shot git key to clone WWW.  No passphrase
 ssh-copy-id -i bin/.ssh/id_rsa git@iounote.quarantine
