@@ -1,0 +1,23 @@
+#-------------------------------------------------------------------------------------
+#  -- Aubrey McIntosh, Ph.D.  $Id$
+#  -- Deterministic build of Trusty 14.04.5 environment
+#  -- and IOUnote development & distribution environment
+#-------------------------------------------------------------------------------------
+
+
+1500307966
+does
+ Builds VM
+ Installs Trusty
+ apt-get installs selected packages
+ installs iounote web pages
+ restores git repository
+
+to do
+ copy local files in ~aubrey
+
+1500056099
+
+have successful_install create a VB snapshot.
+
+

@@ -198,8 +198,8 @@ ubiquity ubiquity/success_command string \
   mount --bind /tmp /target/tmp; \
   mkdir -p /target/mnt/git/cdrom2; \
   mount /dev/sr2 /target/mnt/git/cdrom2; \
-  mkdir -p /target/mnt/passwd.username/opt; \
-  mount /dev/sr3 /target/mnt/passwd.username/opt; \
+  mkdir -p /target/mnt/username/opt; \
+  mount /dev/sr3 /target/mnt/username/opt; \
   in-target /tmp/bin/002-post-install-new-system.sh; \
   in-target touch ~www-data/test-if-directory-and-user-exist; \
   in-target touch /the-root-directory-somewhere; pwd; \
