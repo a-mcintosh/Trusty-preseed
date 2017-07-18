@@ -16,26 +16,27 @@ echo $1
 if [ -z ${1+x} ]; then 
   echo "Usage: 001-make-iso-14.04.5.sh <quoted ssh passphrase>"; 
   exit 1
-else echo "The passphrase is '$1'"; 
+else echo "The passphrase is: '$1'"; 
 fi
+git status
 echo '#  ----------------------------------------------------------------'
 
 echo "\$Id$"$EPOCH > this.epoch
 if [ ! -e isolinux/isolinux.bin ]
   then 
-    cp ../cdrom/isolinux/isolinux.byein isolinux/;
+    cp ../cdrom/isolinux/isolinux.bin isolinux/;
     chmod u+w isolinux/isolinux.bin
 fi
 
-rm bin/.ssh/id_rsa{,-$EPOCH}{,.pub}
-ssh-keygen -N "This becomes an authorized key." -f bin/.ssh/id_rsa-$EPOCH
+rm bin/.ssh/id_rsa-one-shot-{host,iounote}{,.pub}
 #  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
 
-ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot -C oneshot@host
-ssh-copy-id -i bin/.ssh/id_rsa-one-shot amcintosh@host.quarantine
+ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot-host -C "oneshot host `whoami`@`hostname`"
+ssh-copy-id -i bin/.ssh/id_rsa-one-shot-host amcintosh@host.quarantine.vima.austin.tx.us.
 
-ssh-keygen -N "" -f bin/.ssh/id_rsa  #One shot git key to clone WWW.  No passphrase
-ssh-copy-id -i bin/.ssh/id_rsa git@iounote.quarantine
+ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot-iounote -C "oneshot iounote `whoami`@`hostname`"
+ssh-copy-id -i bin/.ssh/id_rsa-one-shot-iounote git@iounote.quarantine.vima.austin.tx.us.
+cp ~/.ssh/known_hosts bin/.ssh/
 
 mkisofs -D -r -input-charset utf-8 \
   -V IOUnote-$EPOCH -cache-inodes -J -l \
@@ -60,9 +61,18 @@ mkisofs -D -r -input-charset utf-8 \
   -o ../tmp/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso \
      . ../cdrom/
 echo '#  ----------------------------------------------------------------'
+bin/001-make-iso-git-repository.sh
+bin/001-make-iso-opt-repository.sh
+echo '#  ----------------------------------------------------------------'
 ssh amcintosh@host mkdir -p "~"/projects/iounote/$EPOCH
 scp ../tmp/ubuntu-14.04.5-iounote-$EPOCH-amd64.iso amcintosh@host:'~'/projects/iounote/$EPOCH/.
 scp ./bin/001-createVM-14.04.5.sh amcintosh@host:'~'/projects/iounote/$EPOCH/.
+#  ----------------------------------------------------------------
+
 ssh amcintosh@host "cd ~/projects/iounote/$EPOCH; ./001-createVM-14.04.5.sh"
 ssh amcintosh@host "VBoxManage startvm iounote-$EPOCH &"
+
+
+
+
 
