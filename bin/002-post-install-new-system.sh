@@ -117,10 +117,10 @@ cp -pr /tmp/bin/ ~passwd.username/bin/
 mv ~passwd.username/bin/.ssh ~passwd.username
 (
   cd ~passwd.username/.ssh
-  chmod 0700 ~passwd.username/.ssh/id_rsa
+  chmod 0600 ~passwd.username/.ssh/id_rsa
   wget http://lifepod13/ssh-pubkeys/authorized_keys
   cat id_rsa-*.pub >> authorized_keys
-  chmod -R u+r,g0-rw ~passwd.username/.ssh/
+  chmod -R u+r,go-rw ~passwd.username/.ssh/
 
 #-------------------------------------------------------------------------------------
 #  -- copy it to the two others.
@@ -132,13 +132,17 @@ mv ~passwd.username/bin/.ssh ~passwd.username
   cp -pr ~passwd.username/.ssh/*     ~/.ssh
 )
 
-ssh git@iounote.quarantine.vima.austin.tx.us pwd  #force known_hosts update
-ssh amcintosh@host "VBoxManage snapshot iounote-$EPOCH take late-install --live &"
-git clone git@iounote.quarantine.vima.austin.tx.us:www-iounote.git  ~www-data/www-iounote
+#ssh amcintosh@host.quarantine.vima.austin.tx.us. "VBoxManage snapshot iounote-1500056099 take late-install --live &"
+git clone git@iounote.quarantine.vima.austin.tx.us.:www-iounote.git  ~www-data/www-iounote
+sudo chown -R www-data:www-data ~www-data
 git clone /cdrom ~passwd.username/opt/iso/Trusty-preseed
+sudo chown -R passwd.username:passwd.username ~passwd.username/opt
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noetls 
 #-------------------------------------------------------------------------------------
-sudo chown -R 1000:1000 ~passwd.username/.
+
 logger -i "Aubrey, why don't I show up in syslog?"
+
+touch /mnt/touched.during.install
+
 
 
