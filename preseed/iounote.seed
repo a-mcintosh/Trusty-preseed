@@ -182,17 +182,9 @@ d-i finish-install/keep-consoles boolean true
 
 #  ----------------------------------------------------------------
 #  -- Document that these execute.
-#  ----------------------------------------------------------------
+#  ------------------------y----------------------------------------
 d-i partman/early_command string \
-  /cdrom/bin/003-early-command.sh; \
-  sed -i s/passwd.username/$(debconf-get passwd/username)/g /tmp/bin/*.sh; \
-  touch /etc/skel/ahaw-`date '+%s'`; \
-  ssh -i /tmp/bin/.ssh/id_rsa git@iounote.quarantine.vima.austin.tx.us ls; \
-  logger -i "$(debconf-get passwd/username)"; \
-  logger -i "$(debconf-get netcfg/hostname)"; \
-  logger -i "$(debconf-get netcfg/get_domain)"; \
-  logger -i "$(debconf-get netcfg/choose_interface)"; \
-  ls -laR /usr/lib/ubiquity
+  /cdrom/bin/003-early-command.sh
 
 #  ----------------------------------------------------------------
 #  -- 2017-07-08 Grabbed from 
@@ -201,11 +193,16 @@ d-i partman/early_command string \
 #  -- does not work after success ---> $(debconf-get passwd/username)
 #  ----------------------------------------------------------------
 ubiquity ubiquity/success_command string \
+  export DISPLAY=:0.0; \
   mount --bind /cdrom /target/cdrom; \
   mount --bind /tmp /target/tmp; \
-  ls -laR /usr/lib/ubiquity; \
   in-target /tmp/bin/002-post-install-new-system.sh; \
-  in-target /tmp/bin/006-git-server-setup.sh
+  in-target touch ~www-data/test-if-directory-and-user-exist; \
+  /tmp/bin/006-git-server-setup.sh; \
+  /tmp/bin/006-user-opt-iso-setup.sh; \
+  installer -i finishing success_command; \
+  cp -p /var/log/syslog /target/var/log/installer/syslog2
+
 
 
 
