@@ -27,6 +27,8 @@ VBoxManage storageattach "iounote-$thisEpoch" --storagectl "SATA Controller" --p
 VBoxManage storageattach "iounote-$thisEpoch" --storagectl "SATA Controller" --port 4 --device 0  --type hdd --medium "/home/amcintosh/VirtualBox VMs/iounote-$thisEpoch/iounote-$thisEpoch.blockchains.vdi"
 
 VBoxManage storageattach "iounote-$thisEpoch"  --storagectl "SATA Controller" --port 6 --device 0 --type dvddrive --medium /usr/share/virtualbox/VBoxGuestAdditions.iso --hotpluggable on
+VBoxManage storageattach "iounote-$thisEpoch"  --storagectl "SATA Controller" --port 7 --device 0 --type dvddrive --medium /home/amcintosh/projects/iounote/$thisEpoch/git-repository-iounote-$thisEpoch.iso --hotpluggable on
+VBoxManage storageattach "iounote-$thisEpoch"  --storagectl "SATA Controller" --port 8 --device 0 --type dvddrive --medium /home/amcintosh/projects/iounote/$thisEpoch/opt-repository-iounote-$thisEpoch.iso --hotpluggable on
 #-------------------------------------------------------------------------------------
 
 echo VBoxManage startvm "iounote-$thisEpoch"
