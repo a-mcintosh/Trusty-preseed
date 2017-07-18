@@ -196,10 +196,15 @@ ubiquity ubiquity/success_command string \
   export DISPLAY=:0.0; \
   mount --bind /cdrom /target/cdrom; \
   mount --bind /tmp /target/tmp; \
+  mkdir -p /target/mnt/git/cdrom2; \
+  mount /dev/sr2 /target/mnt/git/cdrom2; \
+  mkdir -p /target/mnt/passwd.username/opt; \
+  mount /dev/sr3 /target/mnt/passwd.username/opt; \
   in-target /tmp/bin/002-post-install-new-system.sh; \
   in-target touch ~www-data/test-if-directory-and-user-exist; \
-  /tmp/bin/006-git-server-setup.sh; \
-  /tmp/bin/006-user-opt-iso-setup.sh; \
+  in-target touch /the-root-directory-somewhere; pwd; \
+  in-target /tmp/bin/006-git-server-setup.sh; \
+  in-target /tmp/bin/006-user-opt-iso-setup.sh; \
   installer -i finishing success_command; \
   cp -p /var/log/syslog /target/var/log/installer/syslog2
 
