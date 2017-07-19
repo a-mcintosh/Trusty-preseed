@@ -34,5 +34,5 @@ touch from-in-target  #  /from-in-target
 chown git from-in-target
 chgrp aubrey from-in-target
 
-xterm -title git
+#xterm -title git
 

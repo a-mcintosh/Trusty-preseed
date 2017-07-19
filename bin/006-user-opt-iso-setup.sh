@@ -8,5 +8,5 @@ umask 0067
 #-------------------------------------------------------------------------------------
 cp -pr /mnt/username/opt/ /home/passwd.username/
 chown -R passwd.username:passwd.username ~passwd.username
-xterm -title opt
+#xterm -title opt
 

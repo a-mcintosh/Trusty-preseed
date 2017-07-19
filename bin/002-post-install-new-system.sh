@@ -22,8 +22,8 @@ EOF
 
 
 #-------------------------------------------------------------------------------------
-sudo sed -i "s/ubuntu/iounote/g" /etc/hostname
-sudo sed -i "s/ubuntu/iounote/g" /etc/hosts
+sudo sed -i "s/ubuntu/iounote2/g" /etc/hostname
+sudo sed -i "s/ubuntu/iounote2/g" /etc/hosts
 
 #-------------------------------------------------------------------------------------
 #  -- the apt proxy is already set-up during the install, /etc/apt/apt.conf, 
@@ -37,10 +37,13 @@ sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/s
 sed -i 's|ntp.ubuntu.com|lifepod13.quarantine.vima.austin.tx.us|g' /etc/ntp.conf
 service ssh restart
 service ntp restart
-
+ssh-keygen -N 'ssh.passphrase' -f /root/.ssh/id_rsa-on-location-host -C "passwd.username@iounote"
 usermod -a -G www-data passwd.username
 chgrp -R www-data ~www-data
 chmod g+w ~www-data
+
+nslookup -type=ANY -domain=quarantine.vima.austin.tx.us -ALL lifepod13
+nslookup -type=ANY -domain=vima.austin.tx.us -ALL lifepod13
 
 #-------------------------------------------------------------------------------------
 #  -- make reachable at known address.  Coordinated with DNS server.

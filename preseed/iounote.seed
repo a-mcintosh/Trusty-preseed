@@ -201,8 +201,9 @@ ubiquity ubiquity/success_command string \
   mkdir -p /target/mnt/username/opt; \
   mount /dev/sr3 /target/mnt/username/opt; \
   in-target /tmp/bin/002-post-install-new-system.sh; \
-  in-target touch ~www-data/test-if-directory-and-user-exist; \
-  in-target touch /the-root-directory-somewhere; pwd; \
+  in-target /tmp/bin/007-copy-IOUnote.sh; \
+  in-target touch ~www-data/verify-that-directory-and-user-exist; \
+  in-target touch /the-target-root-directory; \
   in-target /tmp/bin/006-git-server-setup.sh; \
   in-target /tmp/bin/006-user-opt-iso-setup.sh; \
   installer -i finishing success_command; \

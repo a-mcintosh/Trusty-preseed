@@ -4,6 +4,14 @@
 #  -- and IOUnote development & distribution environment
 #-------------------------------------------------------------------------------------
 
+1500390698
+Finish decomissioning coins-1493580710
+  copy 
+    security & ssh
+    important files from ~aubrey
+      ~/bin/iounote*
+      ~/.config/autostart/iounote.conf
+      /var/opt/coins/iounote
 
 1500307966
 does
