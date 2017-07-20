@@ -72,6 +72,19 @@ Comment[en_US]=I always use a terminal
 Comment=I always use a terminal
 EOF
 
+cat <<EOF > ~passwd.username/.config/autostart/iounote.desktop
+[Desktop Entry]
+Type=Application
+Exec=/home/aubrey/bin/iounote-qt -addnode=[fdbf:946a:5c97:1:80::e8]
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=IOUnote
+Name=IOUnote
+Comment[en_US]=The IOUnote wallet
+Comment=The IOUnote wallet
+EOF
+
 #-------------------------------------------------------------------------------------
 #  -- Virtual Web Host for IOUnote
 #  -- I tried a wild card inside the IPv6 address, no bueno.

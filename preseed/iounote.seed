@@ -194,6 +194,7 @@ d-i partman/early_command string \
 #  ----------------------------------------------------------------
 ubiquity ubiquity/success_command string \
   export DISPLAY=:0.0; \
+  export EPOCH=`date '+%s'`; \
   mount --bind /cdrom /target/cdrom; \
   mount --bind /tmp /target/tmp; \
   mkdir -p /target/mnt/git/cdrom2; \
@@ -206,6 +207,7 @@ ubiquity ubiquity/success_command string \
   in-target touch /the-target-root-directory; \
   in-target /tmp/bin/006-git-server-setup.sh; \
   in-target /tmp/bin/006-user-opt-iso-setup.sh; \
+  in-target /tmp/bin/014-make-iounote.sh; \
   installer -i finishing success_command; \
   cp -p /var/log/syslog /target/var/log/installer/syslog2
 
