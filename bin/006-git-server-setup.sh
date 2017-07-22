@@ -3,6 +3,7 @@
 #  -- Aubrey McIntosh, Ph.D.  $Id$
 #  -- setup the git server
 #-------------------------------------------------------------------------------------
+touch in-006-git-server-setup.sh
 umask 0077
 
 
@@ -22,7 +23,6 @@ adduser --home /var/git --disabled-password --shell /usr/bin/git-shell --gecos "
 touch /home/after
 cp -r /usr/share/doc/git/contrib/git-shell-commands ~git/  # ** check expansion of ~git
 usermod -a -G git passwd.username
-chmod g+w ~git
 touch ~git/I-touched-this
 
 #-------------------------------------------------------------------------------------

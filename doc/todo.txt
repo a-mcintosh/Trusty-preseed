@@ -4,6 +4,19 @@
 #  -- and IOUnote development & distribution environment
 #-------------------------------------------------------------------------------------
 
+  introduce iounote.quarantine.vima.austin.tx.us to net.cpp strMainNetDNSSeed
+
+1500575885, 1500610367, 1500666805, 1500676104
+  verified -- IOUnote builds during install.
+    [x] oops, lost git ~www-data due to ssh login trouble.  Fix it.
+          must have .ssh/id_rsa; does not search other keys during install (?)
+    [ ] introduce iounote.quarantine.vima.austin.tx.us to net.cpp strMainNetDNSSeed
+    [x] notice that github does not have AAAA DNS record.  
+    [x] manually introduce bitcoin ppa so that no direct network access is required during install.
+    [x] modify some ssh key comments to better stay oriented in the field.
+    [x] pre-seed bin/.ssh with crafted entries
+    initial steps to carry bryan-mills bytecoin repository in some manner (clone, mirror?)
+
 1500390698
 Finish decomissioning coins-1493580710
   copy 

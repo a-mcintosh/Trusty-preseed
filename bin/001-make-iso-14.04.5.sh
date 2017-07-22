@@ -28,15 +28,23 @@ if [ ! -e isolinux/isolinux.bin ]
     chmod u+w isolinux/isolinux.bin
 fi
 
-rm bin/.ssh/id_rsa-one-shot-{host,iounote}{,.pub}
+rm bin/.ssh/id_rsa-one-shot-*
+ssh-keyscan -t rsa iounote.quarantine.vima.austin.tx.us.  > bin/.ssh/known_hosts
+ssh-keyscan -t rsa iounote                               >> bin/.ssh/known_hosts
+ssh-keyscan -t rsa `dig iounote.quarantine.vima.austin.tx.us. AAAA | awk '/IN AAAA/ { print $5 }'` >> bin/.ssh/known_hosts
+ssh-keyscan -t rsa    host.quarantine.vima.austin.tx.us. >> bin/.ssh/known_hosts
+ssh-keyscan -t rsa    host                               >> bin/.ssh/known_hosts
+ssh-keyscan -t rsa `dig host.quarantine.vima.austin.tx.us. AAAA | awk '/IN AAAA/ { print $5 }'` >> bin/.ssh/known_hosts
+
 #  -- remember: sudo sed -i.bak '/aubrey@iounote/d' ~git/.ssh/authorized_keys
 
-ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot-host -C "oneshot host `whoami`@`hostname`"
-ssh-copy-id -i bin/.ssh/id_rsa-one-shot-host amcintosh@host.quarantine.vima.austin.tx.us.
+ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot-$EPOCH -C "id_rsa_one-shot-$EPOCH `whoami`@`hostname`"
+ln bin/.ssh/id_rsa-one-shot-$EPOCH bin/.ssh/id_rsa
+ln bin/.ssh/id_rsa-one-shot-$EPOCH.pub bin/.ssh/id_rsa.pub
 
-ssh-keygen -N "" -f bin/.ssh/id_rsa-one-shot-iounote -C "oneshot iounote `whoami`@`hostname`"
-ssh-copy-id -i bin/.ssh/id_rsa-one-shot-iounote git@iounote.quarantine.vima.austin.tx.us.
-cp ~/.ssh/known_hosts bin/.ssh/
+ssh-copy-id -i bin/.ssh/id_rsa-one-shot-$EPOCH amcintosh@host.quarantine.vima.austin.tx.us.
+ssh-copy-id -i bin/.ssh/id_rsa-one-shot-$EPOCH git@iounote.quarantine.vima.austin.tx.us.
+ssh-copy-id -i bin/.ssh/id_rsa-one-shot-$EPOCH aubrey@iounote.quarantine.vima.austin.tx.us.
 
 mkisofs -D -r -input-charset utf-8 \
   -V IOUnote-$EPOCH -cache-inodes -J -l \

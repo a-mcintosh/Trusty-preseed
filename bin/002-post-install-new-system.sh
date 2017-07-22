@@ -37,7 +37,8 @@ sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/s
 sed -i 's|ntp.ubuntu.com|lifepod13.quarantine.vima.austin.tx.us|g' /etc/ntp.conf
 service ssh restart
 service ntp restart
-ssh-keygen -N 'ssh.passphrase' -f /root/.ssh/id_rsa-on-location-host -C "passwd.username@iounote"
+ssh-keygen -N 'ssh.passphrase' -f /root/.ssh/id_rsa-on-location-host -C "on-location passwd.username@iounote"
+cp -p /root/.ssh/id_rsa-on-location-host{,.pub} ~passwd.username/.ssh/
 usermod -a -G www-data passwd.username
 chgrp -R www-data ~www-data
 chmod g+w ~www-data
@@ -72,10 +73,11 @@ Comment[en_US]=I always use a terminal
 Comment=I always use a terminal
 EOF
 
-cat <<EOF > ~passwd.username/.config/autostart/iounote.desktop
+cat <<EOF > ~passwd.username/.config/autostart/iounote-qt.desktop
 [Desktop Entry]
 Type=Application
-Exec=/home/aubrey/bin/iounote-qt -addnode=[fdbf:946a:5c97:1:80::e8]
+Exec=/home/aubrey/opt/coins/iounote/iounote-qt
+Terminal=false
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
@@ -84,6 +86,7 @@ Name=IOUnote
 Comment[en_US]=The IOUnote wallet
 Comment=The IOUnote wallet
 EOF
+chmod a-w ~passwd.username/.config/autostart/iounote-qt.desktop
 
 #-------------------------------------------------------------------------------------
 #  -- Virtual Web Host for IOUnote
@@ -130,7 +133,10 @@ touch ~passwd.username/I-am-user-$USER
 #  -- set up the first .ssh directory
 #-------------------------------------------------------------------------------------
 cp -pr /tmp/bin/ ~passwd.username/bin/
+touch ~passwd.username/bin/ready-to-move-ssh-0
+touch ~passwd.username/bin/.ssh/ready-to-move-ssh-1
 mv ~passwd.username/bin/.ssh ~passwd.username
+chmod -R u+w ~passwd.username/bin
 (
   cd ~passwd.username/.ssh
   chmod 0600 ~passwd.username/.ssh/id_rsa
@@ -149,6 +155,7 @@ mv ~passwd.username/bin/.ssh ~passwd.username
 )
 
 #ssh amcintosh@host.quarantine.vima.austin.tx.us. "VBoxManage snapshot iounote-1500056099 take late-install --live &"
+ssh -v git@iounote.quarantine.vima.austin.tx.us. ls
 git clone git@iounote.quarantine.vima.austin.tx.us.:www-iounote.git  ~www-data/www-iounote
 sudo chown -R www-data:www-data ~www-data
 git clone /cdrom ~passwd.username/opt/iso/Trusty-preseed
